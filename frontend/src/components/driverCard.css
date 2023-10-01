@@ -1,0 +1,19 @@
+.driverCard{
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    padding-left:50px;
+}
+.userImg{
+    padding-right: 80px;
+}
+.driverDetails{
+    padding-right: 80px;
+    
+}
+.carDetails{
+    padding-right: 80px;
+}
+.bookbutton{
+width: 200px !important;
+}

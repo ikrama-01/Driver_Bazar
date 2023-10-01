@@ -1,0 +1,11 @@
+.me-2 {
+  align-items: right !important;
+  margin-left: 430px !important;
+}
+.appBar {
+  background-color: #172b4d !important;
+  opacity: 0.93;
+}
+.nav-link {
+  color: rgb(254, 254, 254) !important;
+}
