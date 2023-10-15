@@ -188,8 +188,7 @@ const VehicleCard = ({ vehicle, setState, selectPreference, prefer }) => {
                 onClick={() => {
                   // update localStorage.getItem('profile').preferredVehicleId to remove driverId
                   // update vehicle._id to have driverId=localStorage.getItem('id')
-                  // update driver to change/add preferredVehicleId to vehicle._id
-
+                  // update driver to change/add preferredVehicleId to vehicle._id              
                   if (
                     JSON.parse(localStorage.getItem("profile"))
                       .preferredVehicle === vehicle._id

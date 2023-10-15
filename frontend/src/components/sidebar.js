@@ -232,7 +232,7 @@ export default function MiniDrawer({ hist, children }) {
                       : index === 2
                       ? "/rider/payments"
                       : index === 3
-                      ? "/rider"
+                      ? "/rider/switchdriver"
                       : "/rider/notifications"
                   );
                 } else if (localStorage.getItem("role") === "driver") {

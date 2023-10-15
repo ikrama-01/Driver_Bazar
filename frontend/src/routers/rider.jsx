@@ -10,7 +10,7 @@ const Routes = ({ history }) => {
   let { path } = useRouteMatch();
   const role = localStorage.getItem("role");
   const id = localStorage.getItem("id");
-  console.log(id);
+  // console.log(id);
 
   if (id == "") {
     history.push("/");
@@ -22,7 +22,7 @@ const Routes = ({ history }) => {
         <Route path={path} exact component={Dash} />
         <Route path={`${path}/my-rides`} exact component={BookedRides} />
         <Route path={`${path}/payments`} exact component={Payments} />
-        {/* <Route path={`${path}/switchdriver`} exact component={switchDriver} /> */}
+        <Route path={`${path}/switchdriver`} exact component={switchDriver} />
       </Switch>
     </MiniDrawer>
   );

@@ -18,7 +18,7 @@ function SwitchingtoDriverDashboard(){
 
 function switchDriver() {
   return (
-    index === 1
+    index === 0
     ? SwitchingtoNewDriver()
     : SwitchingtoDriverDashboard(),
 
