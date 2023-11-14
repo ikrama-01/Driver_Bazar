@@ -1,5 +1,5 @@
 from app import app 
-from flask import request
+from flask import jsonify, request
 import json
 from user.services import User
 from driver.services import Driver
@@ -33,7 +33,17 @@ def login():
   data = json.loads(request.data)
   return user.login(data)
 
-
+##switchRole
+@app.route('/user/switch_role', methods=['POST'])
+def switch_role():
+    data = json.loads(request.data)
+    return user.switch_role(data)
+  
+##Check Driver id
+@app.route('/user/check_id_match', methods=['POST'])
+def check_id_match():
+    data = json.loads(request.data)
+    return user.check_id_match(data)
 
 # DRIVER
 

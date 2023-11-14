@@ -5,7 +5,14 @@ from flask_apscheduler import APScheduler
 from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
-CORS(app)
+@app.after_request
+def after_request(response): 
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
+CORS(app, origins='http://localhost:3000')
+
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
 # Database

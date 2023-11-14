@@ -232,7 +232,7 @@ export default function MiniDrawer({ hist, children }) {
                       : index === 2
                       ? "/rider/payments"
                       : index === 3
-                      ? "/rider/switchdriver"
+                      ? "/driver/switch"
                       : "/rider/notifications"
                   );
                 } else if (localStorage.getItem("role") === "driver") {
@@ -243,7 +243,7 @@ export default function MiniDrawer({ hist, children }) {
                       ? "/driver/my-rides"
                       : index === 2
                       ? "/driver/payments"
-                      : "/rider"
+                      : "/rider/switch"
                   );
                 }
               }}

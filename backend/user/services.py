@@ -52,11 +52,54 @@ class User:
             return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
 
         return jsonify({"error": "Invalid login credentials"}), 401
+    
+    def switch_role(self, data):
+        email = data['email']
+        new_role = data['new_role']
 
-    # def switchAsRider(self, data):
-    #   user = db.users.find_one({
-    #     "email": data['email']
-    #   })
+        user = db.users.find_one({"email": email})
+        if user:
+            db.users.update_one({"email": email}, {"$set": {"role": new_role}})
+            return jsonify({"success": True, "message": "User role updated successfully"}), 200
+        else:
+            return jsonify({"error": "User not found"}), 404
+        
+    from flask import jsonify
 
-    #   if user['role'] == 'driver':
-    #     return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
+# Assuming db is your database connection
+
+    # def check_id_match(id):
+    #     try:
+    #         # Fetch _id from user collection
+    #         user_doc = db.users.find_one({"_id": id})  # Use {"_id": id} to find a specific ID
+    #         if user_doc:
+    #             user_id = user_doc['_id']
+
+    #             # Check if the _id matches in the driver collection
+    #             matching_driver = db.Drivers.find_one({"uid": user_id})
+    #             if matching_driver:
+    #                 return jsonify({"match_found": True})  # Match found
+    #             else:
+    #                 return jsonify({"match_found": False})  # No match found in driver collection
+    #         else:
+    #             return jsonify({"error": "User not found"})  # No document found in user collection based on the criteria
+    #     except Exception as e:
+    #         print("An error occurred:", e)
+    #         return jsonify({"error": "An error occurred"})  # Return an error response in case of exceptions
+
+    def check_id_match(id):
+        try:
+            # Replace <MongoDB connection string> with your actual MongoDB connection string
+            
+            # Convert the string ID to ObjectId (assuming id_to_check is a string)
+            
+            # Find the document in Drivers collection that matches the provided id
+            matching_driver = db.Drivers.find_one({"uid": id})
+            
+            if matching_driver:
+                return True  # Match found in Drivers collection
+            else:
+                return False  # No match found in Drivers collection
+        except Exception as e:
+            print("An error occurred:", e)
+            return False
