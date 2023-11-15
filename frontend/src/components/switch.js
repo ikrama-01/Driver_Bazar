@@ -130,54 +130,143 @@
 // export default RoleSwitchComponent;
 
 
-import React from 'react';
+// import React from 'react';
+// import { useDispatch } from 'react-redux';
+// import { switchRole } from '../actions/user'; // Import the switchRole action
+// import { useHistory } from 'react-router-dom';
+// import { check_id_match } from '../apis/user';
+
+// const RoleSwitchComponent = () => {
+//   const dispatch = useDispatch();
+//   const history = useHistory();
+//   const profile = JSON.parse(localStorage.getItem('profile'));
+//   const role = localStorage.getItem('role');
+//   const email = '';
+//   const id = profile._id;
+//   console.log(email);
+
+//   const handleRoleSwitch = async () => {
+//     try{ 
+//     if(role === 'driver'){
+
+//       const email = profile.email;    
+//       const newRole = 'rider'; // Replace with the new role
+      
+//       const response = await dispatch(switchRole(email, newRole));
+//       // console.log(response);
+//       localStorage.setItem("role", 'rider');
+//       history.push('/rider');
+//     } 
+//     else{
+//       const response = await dispatch(check_id_match(id));
+//       if(response === true ){
+//         const email = profile.email;    
+//         const newRole = 'driver'; // Replace with the new role
+        
+//         const response = await dispatch(switchRole(email, newRole));
+//         // console.log(response);
+//         localStorage.setItem("role", 'driver');
+//         history.push('/driver');
+//       }else{
+//         history.push('/regAsDriver');
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     // Handle errors
+//   }
+//   };
+//   handleRoleSwitch();
+//   return ('');
+// };
+
+// export default RoleSwitchComponent;
+
+
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { switchRole } from '../actions/user'; // Import the switchRole action
+import { switchRole } from '../actions/user';
 import { useHistory } from 'react-router-dom';
-import { check_id_match } from '../apis/user';
+// import { checkIdMatch } from '../apis/user';
 
 const RoleSwitchComponent = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const profile = JSON.parse(localStorage.getItem('profile'));
-  const role = localStorage.getItem('role');
-  const email = '';
-  const id = profile._id;
-  console.log(email);
+  let role = localStorage.getItem('role');
+  const email = profile.email;
+  const pid = profile._id;
+  // const id = { _id: pid };
+  // console.log(pid);
+
+  useEffect(() => {
+    handleRoleSwitch();
+  }, []);
 
   const handleRoleSwitch = async () => {
-    try{ 
-    if(role === 'driver'){
-
-      const email = profile.email;    
-      const newRole = 'rider'; // Replace with the new role
-      
-      const response = await dispatch(switchRole(email, newRole));
-      // console.log(response);
-      localStorage.setItem("role", 'rider');
-      history.push('/rider');
-    } 
-    else{
-      const response = await dispatch(check_id_match(id));
-      if(response === true ){
-        const email = profile.email;    
-        const newRole = 'driver'; // Replace with the new role
-        
+    try {
+      if (role === 'driver') {
+        // If the current role is 'driver', switch role directly
+        const newRole = 'rider';
         const response = await dispatch(switchRole(email, newRole));
         // console.log(response);
-        localStorage.setItem("role", 'driver');
-        history.push('/driver');
-      }else{
-        history.push('/regAsDriver');
+        if (response.status === 200) {
+          localStorage.setItem('role', 'rider');
+          history.push('/rider');
+        } else {
+          // Handle error while switching role
+        }
+      }  else if (role === 'rider') {
+        // If the current role is 'rider', check in Drivers collection
+        const response = await checkDriver();
+        // console.log(response)
+        if (response.match === true) { // Adjusted the condition to check for a boolean value
+          const newRole = 'driver';
+          const switchResponse = await dispatch(switchRole(email, newRole));
+          if (switchResponse.status === 200) {
+            localStorage.setItem('role', 'driver');
+            history.push('/driver');
+          } else {
+            // Handle error
+          }
+        } else {
+          history.push('/regAsDriver');
+        }
+      } else {
+        // Handle other cases or errors
       }
+    } catch (error) {
+      console.error(error);
+      // Handle other errors
     }
-  } catch (error) {
-    console.log(error);
-    // Handle errors
-  }
   };
-  handleRoleSwitch();
-  return ('');
+
+  
+  const checkDriver = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/user/check_id_match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id : pid }), // Assuming 'id' is the profile ID to check in Drivers collection
+      });
+      console.log(response);
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      return data;
+    }
+    catch (error) {
+      console.error(error);
+      // Handle errors while checking driver
+      // return { match: false }; // Return false for simplicity when encountering an error
+    }
+  };
+  return null; // Return null or any other component since this component doesn't render anything visible
 };
 
 export default RoleSwitchComponent;

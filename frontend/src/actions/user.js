@@ -1,7 +1,7 @@
 import { login as login_api, signup as signup_api } from "../apis/user";
 import { switchRole as switchRole_api } from "../apis/user";
 // import { check_id_match } from '../apis/user';
-import API from '../api/user';
+// import API from '../api/user';
 
 
 export const login = (formdata, router) => async (dispatch) => {
@@ -47,6 +47,16 @@ export const switchRole = (email, newRole) => async (dispatch) => {
   }
 };
 
+// export const checkIdMatch = (id) => async (dispatch) => {
+//   try {
+//     const response = await checkIdMatch({ id });
+//     console.log(response);
+//     return response.data; // Assuming the response contains data
+//   } catch (error) {
+//     throw error; // Propagate the error
+//   }
+// };
+
 // export const check_id_match = (id) => async (dispatch) => {
 //   try {
 //     const response = await check_id_action(id);
@@ -63,13 +73,14 @@ export const switchRole = (email, newRole) => async (dispatch) => {
 //     return false;
 //   }
 // };
-export const check_id_match = (id) => async () => {
-  try {
-      const response = await API.post('/user/check_id_match', { id });
-      console.log(response);
-      return response.data;
-  } catch (error) {
-      console.log(error);
-      // Handle errors
-  }
-};
+// export const check_id_match = (id) => async () => {
+//   try {
+//       const response = await API.post('/user/check_id_match', { id });
+//       console.log(response);
+//       return response.data;
+//   } catch (error) {
+//       console.log(error);
+//       // Handle errors
+//   }
+// };
+

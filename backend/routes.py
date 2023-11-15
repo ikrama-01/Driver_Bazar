@@ -7,6 +7,8 @@ from commission.services import Commission
 from vehicle.services import Vehicle
 from payment.services import Payment
 import razorpay
+from bson import ObjectId
+from app import db
 
 rzp_id = 'rzp_test_Ji0esyBmxAq54k'
 rzp_secret = 'PvXAjGFXqtChANm4sOZeVDyk'
@@ -39,11 +41,40 @@ def switch_role():
     data = json.loads(request.data)
     return user.switch_role(data)
   
-##Check Driver id
+# ##Check Driver id
+# @app.route('/user/check_id_match', methods=['POST'])
+# def check_id_match():
+#     data = json.loads(request.data)
+#     return user.check_id_match(data)
+  
 @app.route('/user/check_id_match', methods=['POST'])
 def check_id_match():
-    data = json.loads(request.data)
-    return user.check_id_match(data)
+    try:
+        data = request.get_json()  # Extract JSON data from the request
+        # Implement your logic to check the ID in the database based on 'data'
+        # Your existing logic goes here...
+        # return user.check_id_match(data)
+        # return jsonify({'success': True}), 200  # Return a success response
+        user_id = data.get('id')
+        print("Received user ID from frontend:", user_id)  # Print the received user ID
+          
+        if user_id:
+            user_object_id = ObjectId(user_id)
+            matching_driver = db.Drivers.find_one({"uid": user_object_id})
+            if matching_driver:
+                response = {"match": True}
+                print("Sending response to frontend:", response)  # Print the response being sent
+                return jsonify(response), 200
+            else:
+              response = {"match": False}
+              print("Sending response to frontend:", response)  # Print the response being sent
+              return jsonify(response), 200
+        else:
+          response = {"error": "No ID provided"}
+          print("Sending response to frontend:", response)  # Print the response being sent
+          return jsonify(response), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500 
 
 # DRIVER
 

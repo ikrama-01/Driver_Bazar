@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, session, redirect
 from passlib.hash import pbkdf2_sha256
 from app import db
+from flask_cors import cross_origin
+from bson import ObjectId
 
 
 class User:
@@ -53,6 +55,8 @@ class User:
 
         return jsonify({"error": "Invalid login credentials"}), 401
     
+    
+ 
     def switch_role(self, data):
         email = data['email']
         new_role = data['new_role']
@@ -87,19 +91,50 @@ class User:
     #         print("An error occurred:", e)
     #         return jsonify({"error": "An error occurred"})  # Return an error response in case of exceptions
 
-    def check_id_match(id):
+    # def check_id_match(id):
+    #     try:
+    #         # Replace <MongoDB connection string> with your actual MongoDB connection string
+            
+    #         # Convert the string ID to ObjectId (assuming id_to_check is a string)
+            
+    #         # Find the document in Drivers collection that matches the provided id
+    #         matching_driver = db.Drivers.find_one({"uid": id})
+            
+    #         if matching_driver:
+    #             return True  # Match found in Drivers collection
+    #         else:
+    #             return False  # No match found in Drivers collection
+    #     except Exception as e:
+    #         print("An error occurred:", e)
+    #         return False
+
+
+
+
+    def check_id_match(data):
         try:
-            # Replace <MongoDB connection string> with your actual MongoDB connection string
+            user_id = data.get('id')
+            print("Received user ID from frontend:", user_id)  # Print the received user ID
             
-            # Convert the string ID to ObjectId (assuming id_to_check is a string)
-            
-            # Find the document in Drivers collection that matches the provided id
-            matching_driver = db.Drivers.find_one({"uid": id})
-            
-            if matching_driver:
-                return True  # Match found in Drivers collection
+            if user_id:
+                user_object_id = ObjectId(user_id)
+                matching_driver = db.Drivers.find_one({"uid": user_object_id})
+                if matching_driver:
+                    response = {"match": True}
+                    print("Sending response to frontend:", response)  # Print the response being sent
+                    return jsonify(response), 200
+                else:
+                    response = {"match": False}
+                    print("Sending response to frontend:", response)  # Print the response being sent
+                    return jsonify(response), 200
             else:
-                return False  # No match found in Drivers collection
+                response = {"error": "No ID provided"}
+                print("Sending response to frontend:", response)  # Print the response being sent
+                return jsonify(response), 400
         except Exception as e:
             print("An error occurred:", e)
-            return False
+            response = {"error": "An error occurred"}
+            print("Sending response to frontend:", response)  # Print the response being sent
+            return jsonify(response), 500
+
+
