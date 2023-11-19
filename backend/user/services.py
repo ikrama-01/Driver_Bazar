@@ -52,6 +52,9 @@ class User:
             return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired}
 
         if user['name'] and pbkdf2_sha256.verify(data['password'], user['password']):
+            print("THis is the did")
+            if 'did' not in user: 
+                return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
             return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['did'])}
 
         return jsonify({"error": "Invalid login credentials"}), 401

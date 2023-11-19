@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Grid, TextField, Button } from "@mui/material";
 import { signup } from "../actions/user";
 import { createDriver } from "../actions/driver";
+import { useHistory } from "react-router-dom";
 const AddDriver = () => {
+  const history = useHistory(); 
   const [state, setState] = useState({
     name: "",
     email: "",
@@ -13,7 +15,6 @@ const AddDriver = () => {
     password: "",
     confirm: "",
   });
-
   const submit = async (e) => {
     e.preventDefault();
     if (state.password === state.confirm) {
@@ -51,7 +52,9 @@ const AddDriver = () => {
       alert("Passwords must be same!");
     }
   };
-  
+  const back = () => {
+    history.push('/');
+  };
   const handleChange = (e) => {
     setState((state) => ({ ...state, [e.target.name]: e.target.value }));
   };
@@ -65,6 +68,16 @@ const AddDriver = () => {
       alignItems="flex-start"
       spacing={3}
     >
+      <Grid container item xs={12} justifyContent="flex-start"> {/* Adjust xs={12} or other breakpoints as needed */}
+      <Button
+        onClick={back}
+        variant="contained"
+        sx={{ mt: 0, mb: 0, bgcolor: "#273A5A" }}
+      >
+        Back
+      </Button>
+    </Grid>
+
       <Grid item container justifyContent="center" xs={12}>
         <h2>Register As a Driver</h2>
       </Grid>
@@ -168,6 +181,7 @@ const AddDriver = () => {
         </Button>
       </Grid>
     </Grid>
+    
   );
 };
 

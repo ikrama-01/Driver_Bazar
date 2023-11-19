@@ -9,7 +9,8 @@ export const createDriver = async (formdata, state) => {
   try {
     const { data } = await create_driver(formdata);
     state();
-    alert("Driver Added successfully");
+    alert("Registration Successful");
+    window.location.href = 'http://localhost:3000/'; 
     return data;
   } catch (error) {
     console.log(error);
