@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { LoadScript } from "@react-google-maps/api";
 import MyForm from "./pages/regAsDriver";
 import AddDriver from "./pages/regAsDriver";
+import AddNewDriver from "./pages/regAsNewDriver";
 const libraries = ["drawing", "places", "visualization"];
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/driver" component={DriverRoutes} />
           <Route path="/admin" component={AdminRoutes} />
           <Route path="/regAsDriver" component={AddDriver} />
+          {/* <Route path="/regAsNewDriver" component={AddNewDriver} /> */}
           <Route path="/" component={Login} />
         </Switch>
       </Router>

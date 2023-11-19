@@ -13,6 +13,7 @@ class User:
           "email": data['email'],
           "password": pbkdf2_sha256.encrypt(data['password']),
           "role": data['role']
+        #   "did" : data['did']
       }
       rider = {
           "name": data['name'],
@@ -51,7 +52,7 @@ class User:
             return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired}
 
         if user['name'] and pbkdf2_sha256.verify(data['password'], user['password']):
-            return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
+            return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['did'])}
 
         return jsonify({"error": "Invalid login credentials"}), 401
     
@@ -111,30 +112,30 @@ class User:
 
 
 
-    def check_id_match(data):
-        try:
-            user_id = data.get('id')
-            print("Received user ID from frontend:", user_id)  # Print the received user ID
+    # def check_id_match(data):
+    #     try:
+    #         user_id = data.get('id')
+    #         print("Received user ID from frontend:", user_id)  # Print the received user ID
             
-            if user_id:
-                user_object_id = ObjectId(user_id)
-                matching_driver = db.Drivers.find_one({"uid": user_object_id})
-                if matching_driver:
-                    response = {"match": True}
-                    print("Sending response to frontend:", response)  # Print the response being sent
-                    return jsonify(response), 200
-                else:
-                    response = {"match": False}
-                    print("Sending response to frontend:", response)  # Print the response being sent
-                    return jsonify(response), 200
-            else:
-                response = {"error": "No ID provided"}
-                print("Sending response to frontend:", response)  # Print the response being sent
-                return jsonify(response), 400
-        except Exception as e:
-            print("An error occurred:", e)
-            response = {"error": "An error occurred"}
-            print("Sending response to frontend:", response)  # Print the response being sent
-            return jsonify(response), 500
+    #         if user_id:
+    #             user_object_id = ObjectId(user_id)
+    #             matching_driver = db.Drivers.find_one({"uid": user_object_id})
+    #             if matching_driver:
+    #                 response = {"match": True}
+    #                 print("Sending response to frontend:", response)  # Print the response being sent
+    #                 return jsonify(response), 200
+    #             else:
+    #                 response = {"match": False}
+    #                 print("Sending response to frontend:", response)  # Print the response being sent
+    #                 return jsonify(response), 200
+    #         else:
+    #             response = {"error": "No ID provided"}
+    #             print("Sending response to frontend:", response)  # Print the response being sent
+    #             return jsonify(response), 400
+    #     except Exception as e:
+    #         print("An error occurred:", e)
+    #         response = {"error": "An error occurred"}
+    #         print("Sending response to frontend:", response)  # Print the response being sent
+    #         return jsonify(response), 500
 
 

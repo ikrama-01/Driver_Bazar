@@ -56,11 +56,12 @@ def check_id_match():
         # return user.check_id_match(data)
         # return jsonify({'success': True}), 200  # Return a success response
         user_id = data.get('id')
+        print(user_id)
         print("Received user ID from frontend:", user_id)  # Print the received user ID
           
         if user_id:
             user_object_id = ObjectId(user_id)
-            matching_driver = db.Drivers.find_one({"uid": user_object_id})
+            matching_driver = db.Drivers.find_one({"_id": user_object_id})
             if matching_driver:
                 response = {"match": True}
                 print("Sending response to frontend:", response)  # Print the response being sent

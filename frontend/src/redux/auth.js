@@ -41,9 +41,11 @@ const reducer = (
     case "UPDATE_PROFILE":
       localStorage.setItem("profile", JSON.stringify({ ...action.data }));
       return { ...state, ...action.data };
+
     // case "ROLE_SWITCH_SUCCESS": // Handle the role switch success action
-    //   localStorage.setItem("role", action.payload.newRole);
-    //   return { ...state, role: action.payload.newRole }; // Update the role in the state
+    // localStorage.setItem("id", action.data._id);
+    // localStorage.setItem("role", action.data.role);
+    // localStorage.setItem("profile", JSON.stringify({ ...action.data }));
     default:
       return { ...state };
   }

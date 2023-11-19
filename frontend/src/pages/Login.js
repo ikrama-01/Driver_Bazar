@@ -16,8 +16,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 
-;
-
 const theme = createTheme();
 
 export default function SignInnUp() {
@@ -48,7 +46,7 @@ export default function SignInnUp() {
         name: data.get("name"),
         email: data.get("email"),
         password: data.get("password"),
-        role: "rider",
+        role: "rider"
       };
 
       if (
@@ -59,7 +57,7 @@ export default function SignInnUp() {
         return alert("Please fill all the credentials");
       } else {
         await signup(formdata, () =>
-          setState({ name: "", email: "", password: "", in_up: "in" })
+          setState({ name: "", email: "", password: "", in_up: "in"})
         );
       }
     }
