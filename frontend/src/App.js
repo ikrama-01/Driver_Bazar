@@ -27,7 +27,7 @@ function App() {
           <Route path="/driver" component={DriverRoutes} />
           <Route path="/admin" component={AdminRoutes} />
           <Route path="/regAsDriver" component={AddDriver} />
-          {/* <Route path="/regAsNewDriver" component={AddNewDriver} /> */}
+          <Route path="/regAsNewDriver" component={AddNewDriver} />
           <Route path="/" component={Login} />
         </Switch>
       </Router>

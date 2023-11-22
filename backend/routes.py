@@ -85,6 +85,37 @@ def create_driver():
   data = json.loads(request.data)
   return driver.createDriver(data)
 
+## Role-Switch based new driver
+@app.route('/add_new_driver', methods=['POST'])
+def add_new_driver():
+    data = request.get_json()
+    
+    # Extract these values from the local storage. 
+    user_name = data.get('user_name')
+    user_email = data.get('user_email')
+    user_uid = ObjectId(data.get('user_uid'))
+
+    # Create a new entry in Drivers collection
+    driver_data = {
+        "name": user_name,
+        "rating": 0,  # Assuming default rating is 0
+        "priceperkm": 0,  # Assuming default price per km is 0
+        "priceperhour": 0,  # Assuming default price per hour is 0
+        "experience": 0,  # Assuming default experience is 0
+        "uid": user_uid
+    }
+    # Insert the driver_data into Drivers collection
+    result = drivers_collection.insert_one(driver_data)
+    
+    # Get the generated _id from the newly inserted driver entry (_id)
+    generated_driver_id = result.inserted_id
+
+    # Update the corresponding user entry in the users collection with the generated _id as did
+    users_collection.update_one(
+        {"$set": {"did": generated_driver_id}}
+    )
+    return jsonify({"message": "Driver role created for rider successfully!"})
+
 
 ## Get drivers
 @app.route('/driver/read/',methods = ['GET'])

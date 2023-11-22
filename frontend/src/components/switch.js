@@ -230,7 +230,7 @@ const RoleSwitchComponent = () => {
             // Handle error
           }
         } else {
-          history.push('/regAsDriver');
+          history.push('/regAsNewDriver');
         }
       } else {
         // Handle other cases or errors
