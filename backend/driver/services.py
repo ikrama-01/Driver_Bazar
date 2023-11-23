@@ -26,31 +26,27 @@ class Driver:
         except Exception as ex:
             print(ex)
             
-    def add_new_driver():
-        data = request.json
+    def create_new_driver(self, driver):
+        try:
+            # Convert uid to ObjectId
+            driver['uid'] = ObjectId(str(driver['uid']))
+            
+            # Insert driver document
+            dbResponse = db.Drivers.insert_one(driver)
 
-        # Manipulate data before saving to MongoDB
-        data['uid'] = ObjectId(str(data['uid']))
-        driver_data = {
-            "name": data['name'],
-            "rating": data['rating'],
-            "priceperkm": data['priceperkm'],
-            "priceperhour": data['priceperhour'],
-            "experience": data['experience'],
-            "uid": data['uid']
-        }
+            if dbResponse:
+                # If driver is successfully inserted, update user document with did
+                db.users.update_one({"_id": driver['uid']}, {"$set": {"did": dbResponse.inserted_id}})
+            
+                return Response(
+                    response=json.dumps({"message": "driver created", "id": f"{dbResponse.inserted_id}"}),
+                    status=200,
+                    mimetype="application/json"
+                )
+        except Exception as ex:
+            print(ex)
 
-        # Insert driver data into the Driver collection
-        dbResponse = db.Drivers.insert_one(driver_data)
-
-        if dbResponse:
-            # Update users collection with driver id
-            db.users.update_one({"_id": data['uid']}, {"$set": {"did": dbResponse.inserted_id}})
-            return jsonify({"message": "Driver created", "id": f"{dbResponse.inserted_id}"}), 200
-        else:
-            return jsonify({"message": "Failed to create driver"}), 500
-
-
+          
     def readDriver(self):
         try:
             data = list(db.Drivers.find())

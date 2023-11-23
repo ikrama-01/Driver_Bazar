@@ -80,40 +80,15 @@ def check_id_match():
 # DRIVER
 
 ## Create Driver
-@app.route('/driver/add_new_driver/',methods = ['POST'])
+
+@app.route('/driver/createDriver/',methods = ['POST'])
 def create_driver():
   data = json.loads(request.data)
   return driver.createDriver(data)
-
-@app.route('/driver/add_new_driver/', methods=['POST'])
-def add_new_driver(data):
-    data = request.json
-    response, status_code = add_new_driver(data)
-    return response, status_code
-
-## Role-Switch based new driver
-# @app.route('/driver/add_new_driver/', methods=['POST'])
-# def add_new_driver(driver):
-#         driver['uid'] = ObjectId(str(driver['uid']))
-#         # driver_data = {
-#         #     "name": data['name'],
-#         #     "rating": data['rating'],
-#         #     "priceperkm": data['priceperkm'], 
-#         #     "priceperhour": data['priceperhour'], 
-#         #     "experience": data['experience'],
-#         #     "uid": data['uid']
-#         # }
-#         dbResponse = db.Driver.insert_one(driver)
-        
-#         if dbResponse:
-#             db.users.update_one({"_id": driver['uid']}, {"$set": {"did": dbResponse.inserted_id}})
-#             return Response(
-#                     response=json.dumps({"message": "driver created", "id": f"{dbResponse.inserted_id}"}),
-#                     status=200,
-#                     mimetype="application/json"
-#                 )
-#         print(Response)
-
+@app.route('/driver/add_new_driver/',methods = ['POST'])
+def create_new_driver():
+  data = json.loads(request.data)
+  return driver.create_new_driver(data)
 
 ## Get drivers
 @app.route('/driver/read/',methods = ['GET'])

@@ -51,7 +51,8 @@ const AddNewDriver = () => {
       if (response.ok) {
         // Handle success, e.g., show a success message
         console.log('Driver created successfully');
-        history.push('/driver');
+        alert('Driver created successfully kindly login again!');
+        history.push('/');
       } else {
         // Handle error, e.g., show an error message
         console.error('Failed to create driver');
