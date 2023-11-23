@@ -9,6 +9,7 @@ API.interceptors.request.use((req) => {
 });
 
 export const create_driver = (formdata) => API.post("/createDriver/", formdata);
+// export const create_new_driver = (formdata) => API.post("/add_new_driver/", formdata);
 export const get_driver = () => API.get("/read/");
 export const update_driver = (id, formdata) =>
   API.patch(`/update/${id}`, formdata);

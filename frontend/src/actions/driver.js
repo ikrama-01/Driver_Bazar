@@ -3,6 +3,7 @@ import {
   get_driver,
   update_driver,
   delete_driver,
+  create_new_driver
 } from "../apis/driver";
 
 export const createDriver = async (formdata, state) => {
@@ -16,6 +17,18 @@ export const createDriver = async (formdata, state) => {
     console.log(error);
   }
 };
+
+// export const createNewDriver = async (formdata, state) => {
+//   try {
+//     const { data } = await create_new_driver(formdata);
+//     state();
+//     alert("Registration Successful");
+//     window.location.href = 'http://localhost:3000/'; 
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 export const getDrivers = async () => {
   try {

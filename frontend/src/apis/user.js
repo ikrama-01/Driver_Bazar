@@ -12,6 +12,6 @@ export const signup = (formdata) => API.post("/signup/", formdata);
 export const login = (formdata) => API.post("/login/", formdata);
 export const reset_password = (formdata) =>
   API.post("/reset_Password", formdata);
-export const switchRole = (data) => API.post("/switch_role", data); // Update with your endpoint
+export const switchRole = (data) => API.post("/switch_role/", data); // Update with your endpoint
 // export const check_id_match = (data) => API.post("/check_id_match", data); // Update with your endpoint
 // export const checkIdMatch = (data) => axios.post('/user/check_id_match', data); // Adjust the endpoint as per your backend

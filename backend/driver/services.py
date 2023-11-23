@@ -1,4 +1,4 @@
-from flask import Response
+from flask import Response, jsonify, request
 from app import db
 import json
 from bson import ObjectId, json_util
@@ -25,6 +25,30 @@ class Driver:
                 )
         except Exception as ex:
             print(ex)
+            
+    def add_new_driver():
+        data = request.json
+
+        # Manipulate data before saving to MongoDB
+        data['uid'] = ObjectId(str(data['uid']))
+        driver_data = {
+            "name": data['name'],
+            "rating": data['rating'],
+            "priceperkm": data['priceperkm'],
+            "priceperhour": data['priceperhour'],
+            "experience": data['experience'],
+            "uid": data['uid']
+        }
+
+        # Insert driver data into the Driver collection
+        dbResponse = db.Drivers.insert_one(driver_data)
+
+        if dbResponse:
+            # Update users collection with driver id
+            db.users.update_one({"_id": data['uid']}, {"$set": {"did": dbResponse.inserted_id}})
+            return jsonify({"message": "Driver created", "id": f"{dbResponse.inserted_id}"}), 200
+        else:
+            return jsonify({"message": "Failed to create driver"}), 500
 
 
     def readDriver(self):

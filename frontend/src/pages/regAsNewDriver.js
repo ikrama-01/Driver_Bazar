@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Grid, TextField, Button } from "@mui/material";
-import { createDriver } from "../actions/driver";
+// import { createNewDriver } from "../actions/driver";
 import { useHistory } from "react-router-dom";
 const AddNewDriver = () => {
     const history = useHistory(); 
-  const [profile, setProfile] = useState({ email: '', name: '' });
+  const [profile, setProfile] = useState({ email: '', name: '' , _id: ''});
   const [state, setState] = useState({
+    name:"",
     rating: 0,
     priceperkm: "",
     priceperhour: "",
@@ -22,21 +23,42 @@ const AddNewDriver = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    await createDriver(
-      {
+    const data = {
+        name: profile.name,
         rating: Number(state.rating),
         priceperkm: Number(state.priceperkm),
         priceperhour: Number(state.priceperhour),
-        experience: state.experience
-      },
-      () =>
-        setState({
-          rating: "",
-          priceperkm: "",
-          priceperhour: "",
-          experience: "",
-        })
-    );
+        experience: state.experience,
+        uid:profile._id,
+      };
+      // () =>
+      //   setState({
+      //     name:"",
+      //     rating: "",
+      //     priceperkm: "",
+      //     priceperhour: "",
+      //     experience: "",
+      //   })
+    try {
+      const response = await fetch('http://localhost:5000/driver/add_new_driver/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        // Handle success, e.g., show a success message
+        console.log('Driver created successfully');
+        history.push('/driver');
+      } else {
+        // Handle error, e.g., show an error message
+        console.error('Failed to create driver');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
   
   const handleChange = (e) => {
@@ -66,6 +88,17 @@ const AddNewDriver = () => {
     </Grid>
       <Grid item container justifyContent="center" xs={12}>
         <h2>Create your Driver-Based Account</h2>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <TextField
+          required
+          variant="outlined"
+          name="name"
+          onChange={handleChange}
+          value={profile.name}
+          fullWidth
+          label="name"
+        />
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
