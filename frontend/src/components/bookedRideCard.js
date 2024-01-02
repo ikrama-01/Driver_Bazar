@@ -8,6 +8,7 @@ import { updateCommission } from "../actions/commission";
 import { useSelector } from "react-redux";
 import SelectInput from "@mui/material/Select/SelectInput";
 import { getCommissions } from "../actions/commission";
+import './bookedRideCard.css';
 
 function loadScript(src) {
   return new Promise((resolve) => {
@@ -75,6 +76,7 @@ export default function BookedRideCard({ commission, set }) {
     <Paper
       elevation={2}
       style={{
+        overflow:"hidden",
         width: "100%",
         height: "24vh",
         padding: "2% 0",
@@ -91,7 +93,9 @@ export default function BookedRideCard({ commission, set }) {
       >
         <Grid
           item
-          xs={3}
+          xs={4}
+          md={3}
+          sm={2}
           id="driver-photo"
           style={{
             display: "flex",
@@ -99,7 +103,12 @@ export default function BookedRideCard({ commission, set }) {
             justifyContent: "center",
           }}
         >
-          <Avatar sx={{ width: "15vh", height: "15vh" }} />
+           <Avatar
+        sx={{
+          width: "15vh",
+          height: "15vh", 
+        }}
+      />
         </Grid>
         <Grid
           container
@@ -112,16 +121,17 @@ export default function BookedRideCard({ commission, set }) {
           <Grid
             item
             xs={5}
+            id="driver-details"
             style={{
               display: "flex",
               justifyContent: "center",
               flexDirection: "column",
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="h6" id="text-css">
               Driver: {commission.driver.name + " "}
             </Typography>
-            <Typography variant="subtitle2">
+            <Typography variant="subtitle2" id="text-css">
               {commission.driver.vehicle?.owner
                 ? ` Owner: ${commission.driver.vehicle?.owner?.name}`
                 : ""}
@@ -276,7 +286,7 @@ export default function BookedRideCard({ commission, set }) {
           >
             <Button
               variant="dark"
-              className="bookbutton"
+              className='bookbutton'
               disabled={
                 localStorage.getItem("role") === "rider"
                   ? commission.status === "Paid" ||

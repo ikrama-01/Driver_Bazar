@@ -17,9 +17,10 @@ function BookedRides() {
   }, []);
 
   return (
-    <Grid container direction="column" spacing={3} justifyContent="center">
-      <Grid container item direction="row" md={3} spacing={5}>
-        <Grid item xs={12}>
+    <Grid container direction="column" spacing={1} xs={12} justifyContent="center" >
+      <Grid container item direction="row" xs={12} spacing={5}>
+        <Grid 
+        item >
           <Typography
             variant="h5"
             style={{
@@ -31,17 +32,22 @@ function BookedRides() {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container item direction="column" md={9} spacing={5}>
+      <Grid container item direction="column" xs={12}
+      spacing={5}>
         {rides?.map((ride, index) => {
           return (
-            <Grid item key={index}>
-              <BookedRideCard commission={ride} set={getdata} />
+            <Grid
+            item 
+            key={index}
+            >
+              <BookedRideCard commission={ride} set={getdata} xs={12}/>
             </Grid>
           );
         })}
       </Grid>
     </Grid>
   );
+  
 }
 
 export default withRouter(BookedRides);

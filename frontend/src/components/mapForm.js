@@ -86,7 +86,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
           {type !== "Hire" ? "Book a ride" : "Hire a driver"}
         </Typography>
-        {type !== "Hire" ? (
+        {type !== "Hire" &&  type!=="Rent"? (
           <>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Tabs value={value} onChange={handleChange}>
@@ -147,7 +147,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
               </Grid>
             </TabPanel>
           </>
-        ) : (
+        ) : type ==="Hire" ?(
           <>
             <Grid
               container
@@ -173,7 +173,34 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
               })}
             </Grid>
           </>
-        )}
+        ):type==="Rent"?(
+          <>
+            <Grid
+              container
+              direction="row"
+              spacing={2}
+              justifyContent="center"
+              style={{ overflowY: "auto", height: "63vh" }}
+            >
+              {drivers.map((driver, index) => {
+                if (!driver.vehicleId && !driver.preferredVehicleId) {
+                  return (
+                    <Grid item style={{ width: "80%" }} key={index}>
+                      <DriverCards
+                        driver={driver}
+                        owner={false}
+                        hireDriver={hireDriver}
+                        close={handleClose}
+                      />
+                    </Grid>
+                  );
+                }
+                return <div key={index}></div>;
+              })}
+            </Grid>
+          </>
+        ): ""
+        }
       </Paper>
     </Modal>
   );
@@ -264,7 +291,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
   const endRef = React.useRef(null);
   const driverRef = React.useRef(null);
   const vehicleRef = React.useRef(null);
-
+  
   const handleChange = (event) => {
     setPlaces((prev) => {
       return { ...prev, [event.target.name]: event.target.value };
@@ -368,7 +395,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
       <Grid container direction="column" alignItems="center" spacing={2}>
         <Grid item style={{ width: "90%" }}>
           <Typography variant="h6" style={{ textAlign: "center" }}>
-            {type !== "Hire" ? "Book a ride" : "Hire a driver"}
+            {type !== "Hire" && type!=="Rent" ? "Book a ride" : type==="Hire" ? "Hire a Driver": "Rent a vehicle"}
             <Divider sx={{ lineWeight: "2px" }} />
           </Typography>
         </Grid>
@@ -394,7 +421,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 id="outlined-name"
                 label="From"
                 name="origin"
-                value={places.origin || ""}
+                value={places?.origin || ""}
                 onChange={handleChange}
                 style={{ width: "100%", color: "#172B4D" }}
                 ref={originRef}
@@ -402,7 +429,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
             </Autocomplete>
           )}
         </Grid>
-        {type !== "Hire" && (
+        {type !== "Hire" && type!=="Rent" && (
           <Grid item style={{ width: "90%" }}>
             {loaded && (
               <Autocomplete
@@ -425,7 +452,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                   id="outlined-uncontrolled"
                   label="To"
                   name="destination"
-                  value={places.destination || ""}
+                  value={places?.destination || ""}
                   onChange={handleChange}
                   style={{ width: "100%", color: "#172B4D" }}
                   ref={destRef}
@@ -441,7 +468,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 <DateTimePicker
                   id="date-time"
                   label="Start Date & Time"
-                  minDate={dayjs().add(1, "M")}
+                  minDate={dayjs().add(0, "D")}
                   maxDateTime={dayjs().add(6, "M")}
                   renderInput={(props) => (
                     <TextField
@@ -464,7 +491,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 <DateTimePicker
                   id="date-time"
                   label="End Date & Time"
-                  minDateTime={dates.start.add(1, "M")}
+                  minDateTime={dates.start.add(0, "D")}
                   maxDateTime={dates.start.add(6, "M")}
                   renderInput={(props) => (
                     <TextField
@@ -490,7 +517,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 <DatePicker
                   id="date"
                   label="Start Date"
-                  minDate={dayjs().add(1, "M")}
+                  minDate={dayjs().add(0, "D")}
                   maxDateTime={dayjs().add(6, "M")}
                   renderInput={(props) => (
                     <TextField
@@ -513,7 +540,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 <DatePicker
                   id="date"
                   label="End Date"
-                  minDateTime={dates.start.add(1, "M")}
+                  minDateTime={dates.start.add(0, "D")}
                   maxDateTime={dates.start.add(6, "M")}
                   renderInput={(props) => (
                     <TextField
@@ -550,6 +577,26 @@ function BookingForm({ type, loaded, places, setPlaces }) {
             />
           </Grid>
         )}
+        
+        {/* Rent vehicle Form */}
+        {type === "Rent" && (
+          <Grid item style={{ width: "90%" }}>
+            <TextField
+              id="Vehicle"
+              label="Vehicle"
+              value={
+                selectedVehicle.model
+                  ? `${selectedVehicle.brand} ${selectedVehicle.model}`
+                  : ""
+              }
+              // onChange={handleChange}
+              onClick={handleOpen1}
+              style={{ width: "100%" }}
+              ref={vehicleRef}
+            />
+          </Grid>
+        )}
+
         <Grid item style={{ width: "90%" }}>
           {!hiredDriver.name ? (
             <Button
@@ -563,7 +610,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
               }}
               onClick={handleOpen}
             >
-              Search drivers
+              {type === "Rent" ? "Search Vehicles" : "Search Drivers"}
             </Button>
           ) : (
             <TextField
@@ -588,9 +635,9 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 color: "white",
                 opacity: 0.9,
               }}
-              onClick={() => handleSubmit(type !== "Hire" ? "Book" : "Hire")}
+              onClick={() => handleSubmit(type !== "Hire" && type!=="Rent" ? "Book" : type === "Hire"? "Hire" : "Rent")}
             >
-              {type !== "Hire" ? "Book" : "Hire"}
+              {type !== "Hire" && type!=="Rent" ? "Book" : type === "Hire"? "Hire" : "Rent"}
             </Button>
           )}
         </Grid>

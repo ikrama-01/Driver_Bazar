@@ -87,7 +87,8 @@ function Dash() {
         >
           <Tab label="Ride" {...a11yProps(0)} />
           <Tab label="Hire" {...a11yProps(1)} />
-          <Tab label="Vehicle" {...a11yProps(2)} />
+          <Tab label="Rent" {...a11yProps(2)} />
+          <Tab label="Vehicle" {...a11yProps(3)} />
         </Tabs>
         <Divider />
       </Grid>
@@ -111,7 +112,7 @@ function Dash() {
               </Paper>
             </Grid>
             <Grid item md={4}>
-              <BookingForm loaded={loaded} places={dest} setPlaces={setDest} />
+              <BookingForm type="Book" loaded={loaded} places={dest} setPlaces={setDest} />
             </Grid>
           </Grid>
         </TabPanel>
@@ -143,8 +144,35 @@ function Dash() {
           </Grid>
         </TabPanel>
 
-        {/* Vehicle Page */}
+        {/* Rent Page */}
         <TabPanel value={value} index={2}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={8}>
+              <Paper
+                sx={{
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                }}
+                elevation={3}
+              >
+                <ChakraProvider theme={theme}>
+                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
+                </ChakraProvider>
+              </Paper>
+            </Grid>
+            <Grid item md={4}>
+              <BookingForm
+                type="Rent"
+                loaded={loaded}
+                places={dest}
+                setPlaces={setDest}
+              />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+        {/* Vehicle Page */}
+        <TabPanel value={value} index={3}>
           <VehicleCards />
         </TabPanel>
       </Grid>

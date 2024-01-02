@@ -1,0 +1,81 @@
+   @media (max-width: 600px) {
+    .bookbutton{
+      max-width: 110px;
+      height: fit-content;
+    }
+    #driver-details:nth-of-type(1) {
+      white-space: nowrap;
+      font-size: 10px;
+      display: flex;
+      flex-direction: row;
+    }
+    #driver-details:nth-of-type(2) {
+      font-size: 10px;
+      display: flex;
+      flex-direction: row;
+    }
+    #driver-details:nth-of-type(3) {
+      font-size: 10px;
+      display: flex;
+      flex-direction:column;
+      position:relative;
+      left: 1vh;
+    }
+    #driver-book{
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      column-gap: 30px;
+      padding: 1%;
+    }
+    #driver-photo{
+      max-width: fit-content;
+      height: auto;
+    }
+    #text-css{
+      font-size: 10px;
+    }
+   }
+    
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .bookbutton{
+      max-width: 110px;
+      height: fit-content;
+    }
+    #driver-details:nth-of-type(1) {
+      white-space: nowrap;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+    }
+    #driver-details:nth-of-type(2) {
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+    }
+    #driver-details:nth-of-type(3) {
+      font-size: 13px;
+      display: flex;
+      flex-direction:column;
+      position:relative;
+      left: 1vh;
+    }
+    #driver-book{
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      column-gap: 30px;
+      padding: 1%;
+    }
+    #driver-photo{
+      max-width: fit-content;
+      height: auto;
+    }
+    #text-css{
+      font-size: 13px;
+    }
+  }
+
+  @media (min-width: 1281px) {}
