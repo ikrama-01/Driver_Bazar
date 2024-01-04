@@ -9,6 +9,7 @@ import BookingForm from "../../components/mapForm";
 import { withRouter } from "react-router-dom";
 import DriverJobs from "../../components/driverJobs";
 import VehicleCards from "../../components/vehicleCards";
+import {useEffect} from 'react'; 
 
 import "./driverBoard.css";
 
@@ -53,8 +54,35 @@ function DriverBoard() {
     };
   }
 
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          console.log('User Location:');
+          console.log(`Latitude: ${latitude}`);
+          console.log(`Longitude: ${longitude}`);
+          console.log("Message being sent"); 
+        },
+        (error) => {
+          console.error('Error getting user location:', error.message);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+    
+  };
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
   return (
     <Grid container direction="column" spacing={3} justifyContent="center">
+      
       <Grid
         container
         item
