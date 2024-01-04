@@ -3,6 +3,7 @@ import {
   get_vehicle,
   update_vehicle,
   delete_vehicle,
+  readCommercialVehicle,
 } from "../apis/vehicle";
 
 export const createVehicle = async (formdata) => {
@@ -35,6 +36,17 @@ export const getVehicles = async () => {
     alert("Something went wrong");
   }
 };
+
+export const getCommercialVehicles = async () => {
+  try {
+    const { data } = await readCommercialVehicle();
+    return data;
+  } catch (error) {
+    console.error("Error fetching commercial vehicles:", error);
+    throw new Error("Failed to fetch commercial vehicles");
+  }
+};
+
 
 export const updateVehicle = async (id, formdata) => {
   try {

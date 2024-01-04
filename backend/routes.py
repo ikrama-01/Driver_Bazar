@@ -9,6 +9,7 @@ from payment.services import Payment
 import razorpay
 from bson import ObjectId
 from app import db
+from bson import json_util 
 
 rzp_id = 'rzp_test_Ji0esyBmxAq54k'
 rzp_secret = 'PvXAjGFXqtChANm4sOZeVDyk'
@@ -120,6 +121,11 @@ def create_vehicle():
 @app.route('/vehicle/readVehicle/',methods = ['GET'])
 def read_vehicle():
   return vehicle.readVehicle()
+
+#READ COMMERCIAL VEHICLES
+@app.route('/vehicle/readCommercialVehicle/',methods = ['GET'])
+def readCommercialVehicle():
+  return vehicle.readCommercialVehicle()
 
 #UPDATE
 @app.route('/vehicle/update/<id>',methods = ['PATCH'])
