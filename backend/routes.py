@@ -47,8 +47,9 @@ def switch_role():
 #     data = json.loads(request.data)
 #     return user.check_id_match(data)
   
+# we will move this to driver, later on 
 @app.route('/user/check_id_match', methods=['POST'])
-def check_id_match():
+def check_id_match():  
     try:
         data = request.get_json()  # Extract JSON data from the request
         # Implement your logic to check the ID in the database based on 'data'
