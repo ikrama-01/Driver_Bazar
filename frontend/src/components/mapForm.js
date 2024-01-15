@@ -62,8 +62,8 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
 
 
   React.useEffect(() => {
-    getDriverData(); 
-  }, []); 
+    getDriverData();
+  }, []);
 
 
 
@@ -270,7 +270,7 @@ const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
           >
             {vehicles?.map((vehicle, index) => {
               return (
-              vehicle.Rent &&
+                vehicle.Rent &&
                 (
                   <Grid item style={{ width: "80%" }} key={index}>
                     <VehicleCards
@@ -310,7 +310,6 @@ function BookingForm({ type, loaded, places, setPlaces }) {
   const endRef = React.useRef(null);
   const driverRef = React.useRef(null);
   const vehicleRef = React.useRef(null);
-  const commercialvehicleRef = React.useRef(null);
 
   const handleChange = (event) => {
     setPlaces((prev) => {
@@ -338,8 +337,32 @@ function BookingForm({ type, loaded, places, setPlaces }) {
     if (type === "Rent") {
       if (places.origin === null || places.origin === "") {
         alert("Please select origin");
+      } else if (selectedVehicle.model === "" || selectedVehicle.model === null) {
+        alert("Please select vehicle");
       } else {
-        alert("vehicle rented");
+        fetch(`https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/Rent_Car.json`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            renterID: localStorage.getItem("id"),
+            ownerID: selectedVehicle.ownerId,
+            Location: originRef.current.value,
+            Price: selectedVehicle.price,
+            Status: "",
+            Car_Name: selectedVehicle.brand + " " + selectedVehicle.model,
+            Model_Number: selectedVehicle.plate,
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("data");
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error sending data to firebase:', error.message);
+          });
       }
     }
   };
@@ -349,7 +372,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
   const handleClose1 = () => setOpen1(false);
 
   const handleSubmit = (type) => {
-    if (type !== "Hire") {
+    if (type !== "Hire" && type !== "Rent") {
       if (places.origin === null) {
         alert("Please select a starting point!");
       } else if (places.destination === null) {
@@ -408,6 +431,37 @@ function BookingForm({ type, loaded, places, setPlaces }) {
         selectVehicle({});
       }
     }
+    // if (type === "Rent") {
+    //   if (places.origin === null || places.origin === "") {
+    //     alert("Please select origin");
+    //   } else if (selectedVehicle.model === "" || selectedVehicle.model === null) {
+    //     alert("Please select vehicle");
+    //   } else {
+    //     fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/Rent_Car.json', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         renterID: localStorage.getItem("id"),
+    //         ownerID: selectedVehicle.ownerId,
+    //         Location: selectedVehicle.Location,
+    //         Price: selectedVehicle.price,
+    //         Status: "True",
+    //         Car_Name: selectedVehicle.brand + selectedVehicle.model,
+    //         Model_Number: selectedVehicle.plate,
+    //       }),
+    //     })
+    //       .then(response => response.json())
+    //       .then(data => {
+    //         console.log("data");
+    //         console.log(data);
+    //       })
+    //       .catch(error => {
+    //         console.error('Error sending data to firebase:', error.message);
+    //       });
+    //   }
+    // }
   };
 
   return (
@@ -452,7 +506,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 value={places?.origin || ""}
                 onChange={handleChange}
                 style={{ width: "100%", color: "#172B4D" }}
-                ref={originRef}
+                inputRef={originRef}
               />
             </Autocomplete>
           )}

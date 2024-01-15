@@ -9,6 +9,7 @@ import BookingForm from "../../components/mapForm";
 import { withRouter } from "react-router-dom";
 import DriverJobs from "../../components/driverJobs";
 import VehicleCards from "../../components/vehicleCards";
+import Rent from "../../components/RentNotifiction";
 
 import "./driverBoard.css";
 
@@ -78,6 +79,7 @@ function DriverBoard() {
         >
           <Tab label="Vehicle" {...a11yProps(0)} />
           <Tab label="Ride Notifications" {...a11yProps(1)} />
+          <Tab label="Rent Notifications" {...a11yProps(2)} />
         </Tabs>
         <Divider />
       </Grid>
@@ -93,6 +95,15 @@ function DriverBoard() {
           <Grid container item direction="row" spacing={5}>
             <Grid item md={12}>
               <DriverJobs />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+             {/* Rent notifications Page */}
+             <TabPanel value={value} index={2}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={12}>
+              <Rent />
             </Grid>
           </Grid>
         </TabPanel>
