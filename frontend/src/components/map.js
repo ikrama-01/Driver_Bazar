@@ -52,7 +52,7 @@ function App({ callback, places, setPlaces }) {
   
   const center = { lat: latitude, lng: longitude };
 
-function get_driver_location() {
+function get_driver_location() {  //no use of this function, will remove later
   fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json', {
     method: 'GET',
     headers: {
