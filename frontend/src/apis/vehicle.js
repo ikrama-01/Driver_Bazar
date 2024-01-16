@@ -11,6 +11,7 @@ API.interceptors.request.use((req) => {
 export const create_vehicle = (formdata) =>
   API.post("/createVehicle/", formdata);
 export const get_vehicle = () => API.get("/readVehicle/");
+export const readCommercialVehicle = () => API.get("/readCommercialVehicle/");
 export const update_vehicle = (id, formdata) =>
   API.patch(`/update/${id}`, formdata);
 export const delete_vehicle = (id) => API.delete(`/delete/${id}`);
