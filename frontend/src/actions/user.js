@@ -13,6 +13,8 @@ export const login = (formdata, router) => async (dispatch) => {
       router("/rider");
     } else if (data.role === "driver") {
       router("/driver");
+    } else if (data.role === "owner") {
+      router("/owner");
     } else {
       router("/admin");
     }

@@ -159,6 +159,22 @@ export default function SignInnUp() {
                   // Redirects to the new page
                 >
                 New to the site? Sign up now! as a driver
+                </Typography>
+                <Typography
+                  component="p"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "2% 0",
+                  }}
+                  onClick={() => {
+                    // setState((prev) => ({ ...prev, in_up: "" }))
+                   window.location.href = "http://localhost:3000/regAsOwner";
+                  // history.push("/regAsDriver")
+                  }} 
+                  // Redirects to the new page
+                >
+                New to the site? Sign up now! as a Fleet Owner
               </Typography>
               </div>
               

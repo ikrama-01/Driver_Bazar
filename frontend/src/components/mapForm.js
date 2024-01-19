@@ -21,7 +21,9 @@ import { Autocomplete } from "@react-google-maps/api";
 import DriverCards from "./driverCard";
 import { getDrivers } from "../actions/driver";
 import { createCommission } from "../actions/commission";
-import { getVehicles, updateVehicle, getCommercialVehicles } from "../actions/vehicle";
+import { getVehicles, updateVehicle } from "../actions/vehicle";
+import { getCommercialVehicles } from "../actions/commVehicle";
+import { getVehicles, updateVehicle, getCommercialVehicles } from "../actions/vehicle"
 import VehicleCards from "./vehicleCard";
 
 function TabPanel(props) {
@@ -91,7 +93,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
         }}
       >
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
-          {type !== "Hire" ? "Book a ride" : "Hire a driver"}
+          {type !== "Hire" ? "Book a ride" : "Hire a driver"}         
         </Typography>
         {type !== "Hire" && type !== "Rent" ? (
           <>
@@ -200,7 +202,16 @@ const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
     setVehicles(data);
   };
 
+  const getcommercialdata = async () => {
+    const data = await getCommercialVehicles();
+    setVehicles(data);
+    console.log(localStorage);
+  };
+
   React.useEffect(() => {
+    if (localStorage.role === "owner" && type === "Hire") {
+      getcommercialdata();
+    } else {  
     if (type === "Rent") {
       getcommercialdata();
     } else {
@@ -732,6 +743,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
         distance={places.distance}
       />
       <VehicleModal
+        type={type}
         open={open1}
         type={type}
         handleClose={handleClose1}
