@@ -23,6 +23,7 @@ import { getDrivers } from "../actions/driver";
 import { createCommission } from "../actions/commission";
 import { getVehicles, updateVehicle } from "../actions/vehicle";
 import { getCommercialVehicles } from "../actions/commVehicle";
+import { getVehicles, updateVehicle, getCommercialVehicles } from "../actions/vehicle"
 import VehicleCards from "./vehicleCard";
 
 function TabPanel(props) {
@@ -54,12 +55,19 @@ function a11yProps(index) {
 const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
   const [value, setValue] = React.useState(0);
   const [drivers, setDrivers] = React.useState([]);
+
   const getDriverData = () => {
     getDrivers().then((meta) => {
       setDrivers(meta.data);
     });
   };
-  React.useEffect(getDriverData, []);
+
+
+  React.useEffect(() => {
+    getDriverData();
+  }, []);
+
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -87,7 +95,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
           {type !== "Hire" ? "Book a ride" : "Hire a driver"}         
         </Typography>
-        {type !== "Hire" &&  type!=="Rent"? (
+        {type !== "Hire" && type !== "Rent" ? (
           <>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Tabs value={value} onChange={handleChange}>
@@ -148,7 +156,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
               </Grid>
             </TabPanel>
           </>
-        ) : type ==="Hire" ?(
+        ) : type === "Hire" ? (
           <>
             <Grid
               container
@@ -174,33 +182,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
               })}
             </Grid>
           </>
-        ):type==="Rent"?(
-          <>
-            <Grid
-              container
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-              style={{ overflowY: "auto", height: "63vh" }}
-            >
-              {drivers.map((driver, index) => {
-                if (!driver.vehicleId && !driver.preferredVehicleId) {
-                  return (
-                    <Grid item style={{ width: "80%" }} key={index}>
-                      <DriverCards
-                        driver={driver}
-                        owner={false}
-                        hireDriver={hireDriver}
-                        close={handleClose}
-                      />
-                    </Grid>
-                  );
-                }
-                return <div key={index}></div>;
-              })}
-            </Grid>
-          </>
-        ): ""
+        ) : ""
         }
       </Paper>
     </Modal>
@@ -210,8 +192,13 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
 const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
   const [value, setValue] = React.useState(0);
   const [vehicles, setVehicles] = React.useState([]);
+
   const getdata = async () => {
     const data = await getVehicles();
+    setVehicles(data);
+  };
+  const getcommercialdata = async () => {
+    const data = await getCommercialVehicles();
     setVehicles(data);
   };
 
@@ -225,9 +212,14 @@ const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
     if (localStorage.role === "owner" && type === "Hire") {
       getcommercialdata();
     } else {  
+    if (type === "Rent") {
+      getcommercialdata();
+    } else {
       getdata();
     }
   }, []);
+
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -255,28 +247,55 @@ const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
           Select Vehicle
         </Typography>
-        <Grid
-          container
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-          style={{ overflowY: "auto", height: "63vh" }}
-        >
-          {vehicles?.map((vehicle, index) => {
-            return (
-              !vehicle.freeasset &&
-              !vehicle.driverId && (
-                <Grid item style={{ width: "80%" }} key={index}>
-                  <VehicleCards
-                    vehicle={vehicle}
-                    selectVehicle={selectVehicle}
-                    close={handleClose}
-                  />
-                </Grid>
-              )
-            );
-          })}
-        </Grid>
+        {type !== "Rent" ? (
+          <Grid
+            container
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            style={{ overflowY: "auto", height: "63vh" }}
+          >
+            {vehicles?.map((vehicle, index) => {
+              return (
+                !vehicle.freeasset &&
+                !vehicle.driverId && (
+                  <Grid item style={{ width: "80%" }} key={index}>
+                    <VehicleCards
+                      vehicle={vehicle}
+                      selectVehicle={selectVehicle}
+                      close={handleClose}
+                    />
+                  </Grid>
+                )
+              );
+            })}
+          </Grid>
+        ) : ""}
+        {type === "Rent" ? (
+          <Grid
+            container
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            style={{ overflowY: "auto", height: "63vh" }}
+          >
+            {vehicles?.map((vehicle, index) => {
+              return (
+                vehicle.Rent &&
+                (
+                  <Grid item style={{ width: "80%" }} key={index}>
+                    <VehicleCards
+                      vehicle={vehicle}
+                      selectVehicle={selectVehicle}
+                      close={handleClose}
+                    />
+                  </Grid>
+                )
+              );
+            })}
+          </Grid>
+        ) : ""}
+
       </Paper>
     </Modal>
   );
@@ -302,7 +321,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
   const endRef = React.useRef(null);
   const driverRef = React.useRef(null);
   const vehicleRef = React.useRef(null);
-  
+
   const handleChange = (event) => {
     setPlaces((prev) => {
       return { ...prev, [event.target.name]: event.target.value };
@@ -315,15 +334,47 @@ function BookingForm({ type, loaded, places, setPlaces }) {
       } else {
         setOpen(true);
       }
-    } else if (
-      places.origin === null ||
-      places.origin === "" ||
-      places.destination === null ||
-      places.destination === ""
-    ) {
-      alert("Please select origin and destination!");
-    } else {
-      setOpen(true);
+    } else if (type === "Book")
+      if (
+        places.origin === null ||
+        places.origin === "" ||
+        places.destination === null ||
+        places.destination === ""
+      ) {
+        alert("Please select origin and destination!");
+      } else {
+        setOpen(true);
+      }
+    if (type === "Rent") {
+      if (places.origin === null || places.origin === "") {
+        alert("Please select origin");
+      } else if (selectedVehicle.model === "" || selectedVehicle.model === null) {
+        alert("Please select vehicle");
+      } else {
+        fetch(`https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/Rent_Car.json`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            renterID: localStorage.getItem("id"),
+            ownerID: selectedVehicle.ownerId,
+            Location: originRef.current.value,
+            Price: selectedVehicle.price,
+            Status: "",
+            Car_Name: selectedVehicle.brand + " " + selectedVehicle.model,
+            Model_Number: selectedVehicle.plate,
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("data");
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error sending data to firebase:', error.message);
+          });
+      }
     }
   };
   const handleClose = () => setOpen(false);
@@ -332,7 +383,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
   const handleClose1 = () => setOpen1(false);
 
   const handleSubmit = (type) => {
-    if (type !== "Hire") {
+    if (type !== "Hire" && type !== "Rent") {
       if (places.origin === null) {
         alert("Please select a starting point!");
       } else if (places.destination === null) {
@@ -381,7 +432,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
           driverId: hiredDriver._id.$oid,
           start: dates.start,
           end: dates.end,
-          price: dayjs(dates.end).diff(dates.start,'h') * hiredDriver.priceperhour,
+          price: dayjs(dates.end).diff(dates.start, 'h') * hiredDriver.priceperhour,
           vehicle: selectedVehicle._id,
           type: "hire",
         });
@@ -391,6 +442,37 @@ function BookingForm({ type, loaded, places, setPlaces }) {
         selectVehicle({});
       }
     }
+    // if (type === "Rent") {
+    //   if (places.origin === null || places.origin === "") {
+    //     alert("Please select origin");
+    //   } else if (selectedVehicle.model === "" || selectedVehicle.model === null) {
+    //     alert("Please select vehicle");
+    //   } else {
+    //     fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/Rent_Car.json', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         renterID: localStorage.getItem("id"),
+    //         ownerID: selectedVehicle.ownerId,
+    //         Location: selectedVehicle.Location,
+    //         Price: selectedVehicle.price,
+    //         Status: "True",
+    //         Car_Name: selectedVehicle.brand + selectedVehicle.model,
+    //         Model_Number: selectedVehicle.plate,
+    //       }),
+    //     })
+    //       .then(response => response.json())
+    //       .then(data => {
+    //         console.log("data");
+    //         console.log(data);
+    //       })
+    //       .catch(error => {
+    //         console.error('Error sending data to firebase:', error.message);
+    //       });
+    //   }
+    // }
   };
 
   return (
@@ -406,7 +488,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
       <Grid container direction="column" alignItems="center" spacing={2}>
         <Grid item style={{ width: "90%" }}>
           <Typography variant="h6" style={{ textAlign: "center" }}>
-            {type !== "Hire" && type!=="Rent" ? "Book a ride" : type==="Hire" ? "Hire a Driver": "Rent a vehicle"}
+            {type !== "Hire" && type !== "Rent" ? "Book a ride" : type === "Hire" ? "Hire a Driver" : "Rent a vehicle"}
             <Divider sx={{ lineWeight: "2px" }} />
           </Typography>
         </Grid>
@@ -435,12 +517,12 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 value={places?.origin || ""}
                 onChange={handleChange}
                 style={{ width: "100%", color: "#172B4D" }}
-                ref={originRef}
+                inputRef={originRef}
               />
             </Autocomplete>
           )}
         </Grid>
-        {type !== "Hire" && type!=="Rent" && (
+        {type !== "Hire" && type !== "Rent" && (
           <Grid item style={{ width: "90%" }}>
             {loaded && (
               <Autocomplete
@@ -588,7 +670,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
             />
           </Grid>
         )}
-        
+
         {/* Rent vehicle Form */}
         {type === "Rent" && (
           <Grid item style={{ width: "90%" }}>
@@ -646,9 +728,9 @@ function BookingForm({ type, loaded, places, setPlaces }) {
                 color: "white",
                 opacity: 0.9,
               }}
-              onClick={() => handleSubmit(type !== "Hire" && type!=="Rent" ? "Book" : type === "Hire"? "Hire" : "Rent")}
+              onClick={() => handleSubmit(type !== "Hire" && type !== "Rent" ? "Book" : type === "Hire" ? "Hire" : "Rent")}
             >
-              {type !== "Hire" && type!=="Rent" ? "Book" : type === "Hire"? "Hire" : "Rent"}
+              {type !== "Hire" && type !== "Rent" ? "Book" : type === "Hire" ? "Hire" : "Rent"}
             </Button>
           )}
         </Grid>
@@ -663,6 +745,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
       <VehicleModal
         type={type}
         open={open1}
+        type={type}
         handleClose={handleClose1}
         selectVehicle={selectVehicle}
       />

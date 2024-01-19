@@ -17,7 +17,7 @@ function App() {
   return (
     <LoadScript
       id="script-loader"
-      googleMapsApiKey="AIzaSyCEJ2TwETGcSfkeYlNTfipfrmTaczDgn28"
+      googleMapsApiKey="AIzaSyA6gr7fy0-jWmpJ9wPrK0W6JIeb_yzN5uI"
       language="en"
       region="EN"
       version="weekly"

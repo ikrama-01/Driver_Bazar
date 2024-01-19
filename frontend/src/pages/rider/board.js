@@ -7,7 +7,6 @@ import Map from "../../components/map";
 import { ChakraProvider, theme } from "@chakra-ui/react";
 import BookingForm from "../../components/mapForm";
 import { withRouter } from "react-router-dom";
-
 import "./board.css";
 import VehicleCards from "../../components/vehicleCards";
 

@@ -9,7 +9,7 @@ import BookingForm from "../../components/mapForm";
 import { withRouter } from "react-router-dom";
 import DriverJobs from "../../components/driverJobs";
 import VehicleCards from "../../components/vehicleCards";
-
+import Rent from "../../components/RentNotifiction";
 import "./driverBoard.css";
 
 function TabPanel(props) {
@@ -53,8 +53,63 @@ function DriverBoard() {
     };
   }
 
+  const getUserLocation = () => {
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          console.log('User Location:');
+          console.log(`Latitude: ${latitude}`);
+          console.log(`Longitude: ${longitude}`);
+          console.log("Message being sent");
+          
+          if (latitude && longitude) {
+            fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ latitude, longitude }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+              })
+              .catch(error => {
+                console.error('Error sending location data to Python server:', error.message);
+              });
+          }
+
+        },
+        (error) => {
+          console.error('Error getting user location:', error.message);
+        }
+      );
+
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  };
+
+  const setupNextInterval = () => {
+    setTimeout(() => {
+      getUserLocation();
+      setupNextInterval(); // Call the function recursively after 20 seconds
+    }, 60000);
+  };
+
+  useEffect(() => {
+    getUserLocation();
+    setupNextInterval();
+
+  }, []);
+
   return (
     <Grid container direction="column" spacing={3} justifyContent="center">
+
       <Grid
         container
         item
@@ -78,11 +133,12 @@ function DriverBoard() {
         >
           <Tab label="Vehicle" {...a11yProps(0)} />
           <Tab label="Ride Notifications" {...a11yProps(1)} />
+          <Tab label="Rent Notifications" {...a11yProps(2)} />
         </Tabs>
         <Divider />
       </Grid>
       <Grid item md={9}>
-  
+
         {/* Vehicle Page */}
         <TabPanel value={value} index={0}>
           <VehicleCards />
@@ -96,7 +152,15 @@ function DriverBoard() {
             </Grid>
           </Grid>
         </TabPanel>
-        
+
+             {/* Rent notifications Page */}
+             <TabPanel value={value} index={2}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={12}>
+              <Rent />
+            </Grid>
+          </Grid>
+        </TabPanel>
       </Grid>
     </Grid>
   );
