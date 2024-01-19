@@ -3,9 +3,11 @@ from flask import Response, jsonify, make_response, request
 import json
 from user.services import User
 from driver.services import Driver
+from FleetOwner.services import FleetOwner
 from commission.services import Commission
 from vehicle.services import Vehicle
 from payment.services import Payment
+from CommercialVehicle.services import CommercialVehicle
 import razorpay
 from bson import ObjectId
 from app import db
@@ -19,6 +21,8 @@ driver = Driver()
 commission = Commission()
 vehicle = Vehicle()
 payment = Payment(client)
+owner = FleetOwner()
+commVehicle = CommercialVehicle()
 
 
 # USER
@@ -173,3 +177,25 @@ def verify():
 @app.route("/payment/read/<id>", methods=['GET'])
 def read_payments(id):
   return payment.readPayments(id)
+
+# OWNER
+
+## Create Owner
+
+@app.route('/owner/createOwner/',methods = ['POST'])
+def create_owner():
+  data = json.loads(request.data)
+  return owner.createOwner(data)
+
+
+# Commercial Vehicles
+
+@app.route('/commercialVehicle/readCommVehicle/',methods = ['GET'])
+def read_commVehicle():
+  return commVehicle.readCommVehicle()
+
+@app.route('/commercialVehicle/addCommVehicle/',methods = ['POST'])
+def add_comm_vehicle():
+  data = json.loads(request.data)
+  return commVehicle.addCommVehicle(data)  
+

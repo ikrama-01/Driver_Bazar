@@ -22,6 +22,7 @@ import DriverCards from "./driverCard";
 import { getDrivers } from "../actions/driver";
 import { createCommission } from "../actions/commission";
 import { getVehicles, updateVehicle } from "../actions/vehicle";
+import { getCommercialVehicles } from "../actions/commVehicle";
 import VehicleCards from "./vehicleCard";
 
 function TabPanel(props) {
@@ -84,7 +85,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
         }}
       >
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
-          {type !== "Hire" ? "Book a ride" : "Hire a driver"}
+          {type !== "Hire" ? "Book a ride" : "Hire a driver"}         
         </Typography>
         {type !== "Hire" &&  type!=="Rent"? (
           <>
@@ -206,7 +207,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
   );
 };
 
-const VehicleModal = ({ open, handleClose, selectVehicle }) => {
+const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
   const [value, setValue] = React.useState(0);
   const [vehicles, setVehicles] = React.useState([]);
   const getdata = async () => {
@@ -214,8 +215,18 @@ const VehicleModal = ({ open, handleClose, selectVehicle }) => {
     setVehicles(data);
   };
 
+  const getcommercialdata = async () => {
+    const data = await getCommercialVehicles();
+    setVehicles(data);
+    console.log(localStorage);
+  };
+
   React.useEffect(() => {
-    getdata();
+    if (localStorage.role === "owner" && type === "Hire") {
+      getcommercialdata();
+    } else {  
+      getdata();
+    }
   }, []);
 
   const handleChange = (event, newValue) => {
@@ -650,6 +661,7 @@ function BookingForm({ type, loaded, places, setPlaces }) {
         distance={places.distance}
       />
       <VehicleModal
+        type={type}
         open={open1}
         handleClose={handleClose1}
         selectVehicle={selectVehicle}
