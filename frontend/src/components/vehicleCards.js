@@ -14,11 +14,17 @@ import {
   deleteVehicle,
   getVehicles,
   updateVehicle,
+  getCommercialVehicles,
 } from "../actions/vehicle";
 import vehiclesvg from "../assets/Fast car-cuate.svg";
 import { updateDriver } from "../actions/driver";
+// import { profile } from "console";
+// import { profile } from "console";
+// import { type } from "os";
 
 const VehicleCard = ({ vehicle, setState, selectPreference, prefer }) => {
+  const profile = JSON.parse(localStorage.getItem('profile'));
+  const profile_name = profile.name;
   // vehicle ID, plate, owner ID, Brand, Model, driver ID, free asset scheme, Hiring Duration
   return (
     <Paper
@@ -72,62 +78,91 @@ const VehicleCard = ({ vehicle, setState, selectPreference, prefer }) => {
               {vehicle.brand} {vehicle.model} ({vehicle.plate})
             </Typography>
           </Grid>
-          <Grid item xs={6} container spacing={1}>
-            <Grid
-              item
-              xs={4}
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="p" component="b">
-                Owner:
-              </Typography>
+          {localStorage.getItem("role") === "owner" ? (
+            <Grid item xs={6} container spacing={1}>
+              <Grid
+                item
+                xs={4}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="p" component="b">
+                  Owner:
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={8}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="p">
+                  {profile_name}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={8}
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="p">
-                {vehicle.owner?.name || vehicle.driver.name}
-              </Typography>
+          ) : (
+            <Grid item xs={6} container spacing={1}>
+              <Grid
+                item
+                xs={4}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="p" component="b">
+                  Owner:
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={8}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="p">
+                  {vehicle.owner?.name || vehicle.driver.name}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={4}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {vehicle.driver && (
+                  <>
+                    <Typography variant="p" component="b">
+                      Driver:
+                    </Typography>
+                  </>
+                )}
+              </Grid>
+              <Grid
+                item
+                xs={8}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {vehicle.driver && (
+                  <>
+                    <Typography variant="p">{vehicle.driver.name}</Typography>
+                  </>
+                )}
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={4}
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              {vehicle.driver && (
-                <>
-                  <Typography variant="p" component="b">
-                    Driver:
-                  </Typography>
-                </>
-              )}
-            </Grid>
-            <Grid
-              item
-              xs={8}
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              {vehicle.driver && (
-                <>
-                  <Typography variant="p">{vehicle.driver.name}</Typography>
-                </>
-              )}
-            </Grid>
-          </Grid>
+            )}
         </Grid>
         <Grid
           container
@@ -247,8 +282,8 @@ const VehicleCard = ({ vehicle, setState, selectPreference, prefer }) => {
             )}
           </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Grid >
+    </Paper >
   );
 };
 
@@ -537,10 +572,22 @@ const VehicleCards = () => {
   const getdata = async () => {
     const data = await getVehicles();
     setVehicles(data);
+    console.log(data);
+  };
+  const getCommercialdata = async () => {
+    const data = await getCommercialVehicles();
+    setVehicles(data);
+    console.log(data);
+
   };
 
+
   useEffect(() => {
-    getdata();
+    if (localStorage.getItem("role") === "owner") {
+      getCommercialdata();
+    } else {
+      getdata();
+    }
   }, [state[0]]);
 
   return (
@@ -570,7 +617,7 @@ const VehicleCards = () => {
           My Vehicles
         </Typography>
         {!JSON.parse(localStorage.getItem("profile")).hired &&
-        localStorage.getItem("role") === "driver" ? (
+          localStorage.getItem("role") === "driver" ? (
           <div
             style={{
               width: "40%",

@@ -9,9 +9,8 @@ from vehicle.services import Vehicle
 from payment.services import Payment
 from CommercialVehicle.services import CommercialVehicle
 import razorpay
-from bson import ObjectId
 from app import db
-from bson import json_util 
+from bson import ObjectId, json_util
 
 rzp_id = 'rzp_test_Ji0esyBmxAq54k'
 rzp_secret = 'PvXAjGFXqtChANm4sOZeVDyk'
@@ -111,8 +110,50 @@ def update_driver(id):
 def delete_driver(id):
   return driver.deleteDriver(id)
 
+#getdriverDetails
+@app.route('/findNearDriver', methods = ['POST'])
+def findNearestDriver():
+    try:
+        request_data = request.get_json()
+        id_array = request_data.get('driverIds', [])
+        print("ids:", id_array)
+        object_ids = [ObjectId(str(_id)) for _id in id_array]
+
+        # Assuming 'Drivers' is the name of the collection
+        data = list(db.Drivers.find({'_id': {'$in': object_ids}}))
+
+        populated_data = []
+
+        for driver in data:
+            try:
+                if 'vehicleId' in driver.keys():
+                    driver['vehicle'] = db.Vehicles.find_one(ObjectId(driver['vehicleId']))
+                elif "preferredVehicleId" in driver.keys():
+                    driver['vehicle'] = db.Vehicles.find_one(ObjectId(driver['preferredVehicleId']))
+
+                if not driver['vehicle']['ownerId'] == driver['vehicle']['driverId']:
+                    try:
+                        driver['vehicle']['owner'] = db.users.find_one(ObjectId(driver['vehicle']['ownerId']))
+                    except:
+                        driver['vehicle']['owner'] = db.Drivers.find_one(ObjectId(driver['vehicle']['ownerId']))
+                    driver['rented'] = True
+                else:
+                    driver['rented'] = False
+            except Exception as e:
+                print(f"Error processing driver: {str(e)}")
+
+            populated_data.append(driver)
+
+        response = json.loads(json_util.dumps(populated_data))
+        return response
+    except Exception as ex:
+        return Response(response=json.dumps({"message": "cannot read data of driver"}),
+                        status=500,
+                        mimetype="application/json"
+                        )
 
 
+      
 # VEHICLE
 
 #CREATE

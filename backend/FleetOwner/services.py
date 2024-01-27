@@ -15,6 +15,7 @@ class FleetOwner:
             # Insert owner document
 
             owner_data = {
+                'uid' : owner._id,
                 'name' : owner.get('name'),
                 'numberofvehicles' : owner.get('numberofvehicles'),
                 'officeaddress' : owner.get('officeaddress'),

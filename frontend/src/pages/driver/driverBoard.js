@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -52,59 +52,61 @@ function DriverBoard() {
       },
     };
   }
+  
+  const [latitude, setLatitude] = useState("");
+const [longitude, setLongitude] = useState("");
+const [id, setId] = useState();
+const [key, setKey] = useState(null);
 
-  const getUserLocation = () => {
+const getUserLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLatitude = position.coords.latitude;
+        const currentLongitude = position.coords.longitude;
+        const currentId = localStorage.getItem('id'); 
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+        setLatitude(currentLatitude);
+        setLongitude(currentLongitude);
+        setId(currentId);
 
-          console.log('User Location:');
-          console.log(`Latitude: ${latitude}`);
-          console.log(`Longitude: ${longitude}`);
-          console.log("Message being sent");
+        console.log('User Location:');
+        console.log(`Latitude: ${currentLatitude}`);
+        console.log(`Longitude: ${currentLongitude}`);
+        console.log("Message being sent");
+
+        if (currentLatitude && currentLongitude) {
+          fetch(`https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location/${currentId}.json`, {
+            method: 'PUT', // Use PUT to update or create a new entry with the specified ID
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ latitude: currentLatitude, longitude: currentLongitude }),
+          })
           
-          if (latitude && longitude) {
-            fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ latitude, longitude }),
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
             })
-              .then(response => response.json())
-              .then(data => {
-                console.log(data);
-              })
-              .catch(error => {
-                console.error('Error sending location data to Python server:', error.message);
-              });
-          }
-
-        },
-        (error) => {
-          console.error('Error getting user location:', error.message);
+            .catch(error => {
+              console.error('Error sending location data to Firebase:', error.message);
+            });
         }
-      );
+      },
+      (error) => {
+        console.error('Error getting user location:', error.message);
+      }
+    );
+  } else {
+    console.error('Geolocation is not supported by this browser.');
+  }
+};
 
-    } else {
-      console.error('Geolocation is not supported by this browser.');
-    }
-  };
 
-  const setupNextInterval = () => {
-    setTimeout(() => {
-      getUserLocation();
-      setupNextInterval(); // Call the function recursively after 20 seconds
-    }, 60000);
-  };
+  
 
   useEffect(() => {
-    getUserLocation();
-    setupNextInterval();
-
+    getUserLocation();  
   }, []);
 
   return (

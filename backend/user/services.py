@@ -50,7 +50,11 @@ class User:
             if not hired and "preferredVehicleId" in driver.keys():
                 return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired, "preferredVehicle": str(driver["preferredVehicleId"])}
             return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired}
-
+        
+        if user['role'] == 'owner':
+            owner = db.FleetOwner.find_one({"uid": user['_id']})
+            return {'name': owner['name'], 'role': 'driver', 'email': user['email'], '_id': str(owner['_id']), 'uid': str(user['_id'])}
+        
         if user['name'] and pbkdf2_sha256.verify(data['password'], user['password']):
             if 'did' not in user: 
                 return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}

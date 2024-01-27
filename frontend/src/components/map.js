@@ -13,6 +13,7 @@ function App({ callback, places, setPlaces }) {
   const [map, setMap] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
 
+  
   function clearRoute() {
     setDirectionsResponse(null);
     if (places.origin === "") {
@@ -52,35 +53,35 @@ function App({ callback, places, setPlaces }) {
   
   const center = { lat: latitude, lng: longitude };
 
-function get_driver_location() {  //no use of this function, will remove later
-  fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(response => response.json())
-    .then(data => {
-      // Assuming 'data' is an object with multiple entries, extract latitude and longitude
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          const entry = data[key];
-          var driver_latitude = entry.latitude;
-          var driver_longitude = entry.longitude;
-          console.log('Latitude:', driver_latitude);
-          console.log('Longitude:', driver_longitude);
-        }
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching location data from Firebase:', error.message);
-    });
-}
+// function get_driver_location() {  //no use of this function, will remove later
+//   fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json', {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   })
+//     .then(response => response.json())
+//     .then(data => {
+//       // Assuming 'data' is an object with multiple entries, extract latitude and longitude
+//       for (const key in data) {
+//         if (data.hasOwnProperty(key)) {
+//           const entry = data[key];
+//           var driver_latitude = entry.latitude;
+//           var driver_longitude = entry.longitude;
+//           // console.log('Latitude:', driver_latitude);
+//           // console.log('Longitude:', driver_longitude);
+//         }
+//       }
+//     })
+//     .catch(error => {
+//       console.error('Error fetching location data from Firebase:', error.message);
+//     });
+// }
   
   useEffect(() => {
     // Check if latitude and longitude are available
     if (latitude && longitude && map) {
-      console.log("Fetching from database");
+      // console.log("Fetching from database");
       // Create a new marker for the user's location
    
       console.log("Fetching driver's location")
@@ -97,8 +98,8 @@ function get_driver_location() {  //no use of this function, will remove later
           const entry = data[key];
           let driver_latitude = entry.latitude;
           let driver_longitude = entry.longitude;
-          console.log('Latitude:', driver_latitude);
-          console.log('Longitude:', driver_longitude);
+          // console.log('Latitude:', driver_latitude);
+          // console.log('Longitude:', driver_longitude);
           new window.google.maps.Marker({
             position: { lat: driver_latitude, lng: driver_longitude },
             map: map,

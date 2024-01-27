@@ -80,6 +80,61 @@ class Driver:
                             mimetype="application/json"
                             )
 
+    # def findNearestDriver(id_array):
+    #         try:
+
+    #             # Convert the IDs in the array to ObjectId format
+    #             object_ids = [ObjectId(_id) for _id in id_array]
+
+    #             # Assuming 'Drivers' is the name of the collection
+    #             data = list(db.Drivers.find({'_id': {'$in': object_ids}}))
+                
+    #             populated_data = []
+
+    #             for driver in data:
+    #                 try:
+    #                     if 'vehicleId' in driver.keys():
+    #                         driver['vehicle'] = db.Vehicles.find_one(ObjectId(driver['vehicleId']))
+    #                     elif "preferredVehicleId" in driver.keys():
+    #                         driver['vehicle'] = db.Vehicles.find_one(ObjectId(driver['preferredVehicleId']))
+
+    #                     if not driver['vehicle']['ownerId'] == driver['vehicle']['driverId']:
+    #                         try:
+    #                             driver['vehicle']['owner'] = db.users.find_one(ObjectId(driver['vehicle']['ownerId']))
+    #                         except:
+    #                             driver['vehicle']['owner'] = db.Drivers.find_one(ObjectId(driver['vehicle']['ownerId']))
+    #                         driver['rented'] = True
+    #                     else:
+    #                         driver['rented'] = False
+
+    #                     populated_data.append(driver)
+    #                 except Exception as e:
+    #                     print(f"Error processing driver: {str(e)}")
+
+    #             # Print all information of the found entries in the database outside the loop
+    #             print("Driver Information:")
+    #             for driver in populated_data:
+    #                 print(f"_id: {driver['_id']}")
+    #                 print("ObjectId:")
+    #                 print(f"name: {driver.get('name', '')}")
+    #                 print(f"rating: {driver.get('rating', '')}")
+    #                 print(f"priceperkm: {driver.get('priceperkm', '')}")
+    #                 print(f"priceperhour: {driver.get('priceperhour', '')}")
+    #                 print(f"experience: {driver.get('experience', '')}")
+    #                 print(f"uid: {driver.get('uid', '')}")
+    #                 print("ObjectId:")
+    #                 print(f"preferredVehicleId: {driver.get('preferredVehicleId', '')}")
+    #                 print("")
+
+    #             response = json.dumps(populated_data)
+    #             return Response(response=response, status=200, mimetype="application/json")
+    #         except Exception as ex:
+    #             print(f"Error: {str(ex)}")
+    #             return Response(response=json.dumps({"message": "cannot read data of driver"}),
+    #                             status=500,
+    #                             mimetype="application/json"
+    #                             )
+            
     def updateDriver(self, id, data):
         try:
             if "vehicleId" in data.keys():

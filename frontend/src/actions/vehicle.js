@@ -40,6 +40,15 @@ export const getVehicles = async () => {
 export const getCommercialVehicles = async () => {
   try {
     const { data } = await readCommercialVehicle();
+    if (localStorage.getItem("role") !== "admin") {
+      let filter = data.filter(
+        (item) =>
+          item.ownerId === localStorage.getItem("id") ||
+          item.driverId === localStorage.getItem("id")
+      );
+      console.log(filter)
+      return filter;
+    }
     return data;
   } catch (error) {
     console.error("Error fetching commercial vehicles:", error);

@@ -17,14 +17,13 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { Autocomplete } from "@react-google-maps/api";
-
 import DriverCards from "./driverCard";
 import { getDrivers } from "../actions/driver";
 import { createCommission } from "../actions/commission";
-import { getVehicles, updateVehicle } from "../actions/vehicle";
-import { getCommercialVehicles } from "../actions/commVehicle";
 import { getVehicles, updateVehicle, getCommercialVehicles } from "../actions/vehicle"
 import VehicleCards from "./vehicleCard";
+import { useState, useEffect, useRef } from "react";
+// import { Console } from "console";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,17 +54,139 @@ function a11yProps(index) {
 const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
   const [value, setValue] = React.useState(0);
   const [drivers, setDrivers] = React.useState([]);
+  const [filteredDrivers, setFilteredDrivers] = React.useState([]);
+  const [driverIds, setDriverIds] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
 
-  const getDriverData = () => {
-    getDrivers().then((meta) => {
-      setDrivers(meta.data);
+  useEffect(() => {
+    const getUserLocation = async () => {
+      try {
+        const position = await getCurrentLocation();
+        setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+      } catch (error) {
+        console.error('Error getting user location:', error.message);
+      }
+    };
+
+    getUserLocation();
+  }, []);
+
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch('https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location.json');
+        if (!response.ok) {
+          throw new Error('Error fetching drivers');
+        }
+
+        const driversData = await response.json();
+        console.log('driversData:', driversData);
+
+        const filteredDrivers = filterDriversByDistance(driversData);
+        setFilteredDrivers(filteredDrivers);
+        const driverIds = filteredDrivers.map(driver => driver.id);
+        console.log('filtered drivers:', filteredDrivers);
+        // console.log(driverIds)
+        fetchNearestDrivers(driverIds)
+      } catch (error) {
+        console.error('Error fetching drivers:', error.message);
+      }
+
+    };
+
+    if (userLocation) {
+      fetchDrivers();
+    }
+  }, [userLocation]);
+
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      } else {
+        reject(new Error('Geolocation is not supported by this browser.'));
+      }
     });
   };
 
+  const filterDriversByDistance = (driversData) => {
+    const driversArray = Object.entries(driversData).map(([id, driver]) => ({
+      id,
+      lat: driver.latitude,
+      lng: driver.longitude,
+    }));
 
-  React.useEffect(() => {
-    getDriverData();
-  }, []);
+    const filteredDrivers = driversArray.filter((driver) => {
+      if (userLocation) {
+        const distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          driver.lat,
+          driver.lng
+        );
+        console.log('Distance:', distance);
+        return distance < 5; // 5km radius for testing
+      }
+      return false;
+    });
+
+    return filteredDrivers;
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth radius in kilometers
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in kilometers
+    return distance;
+  };
+
+  const toRadians = (angle) => {
+    return (angle * Math.PI) / 180;
+  };
+
+  const fetchNearestDrivers = async (driverIds) => {
+    try {
+      console.log(driverIds);
+
+      const response = await fetch('http://localhost:5000/findNearDriver', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ driverIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error fetching nearest drivers');
+      }
+
+      const data = await response.json();
+      setDrivers(data);
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching nearest drivers:', error.message);
+    }
+  };
+
+
+
+
+  // const getDriverData = () => {
+  //   getDrivers().then((meta) => {
+  //     console.log(meta.data)
+  //     setDrivers(meta.data);
+  //   });
+  // };
+
+
+  // React.useEffect(() => {
+  //   getDriverData();
+  // }, []);
+
 
 
 
@@ -93,7 +214,7 @@ const DriverModal = ({ type, open, handleClose, hireDriver, distance }) => {
         }}
       >
         <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
-          {type !== "Hire" ? "Book a ride" : "Hire a driver"}         
+          {type !== "Hire" ? "Book a ride" : "Hire a driver"}
         </Typography>
         {type !== "Hire" && type !== "Rent" ? (
           <>
@@ -202,17 +323,17 @@ const VehicleModal = ({ type, open, handleClose, selectVehicle }) => {
     setVehicles(data);
   };
 
-  const getcommercialdata = async () => {
-    const data = await getCommercialVehicles();
-    setVehicles(data);
-    console.log(localStorage);
-  };
+  // const getcommercialdata = async () => {
+  //   const data = await getCommercialVehicles();
+  //   setVehicles(data);
+  //   console.log(localStorage);
+  // };
 
   React.useEffect(() => {
-    if (localStorage.role === "owner" && type === "Hire") {
+    if (localStorage.getItem("role") === "owner" && type === "vehicle") {
+      console.log(type);
       getcommercialdata();
-    } else {  
-    if (type === "Rent") {
+    } else if (type === "Rent") {
       getcommercialdata();
     } else {
       getdata();
@@ -745,7 +866,6 @@ function BookingForm({ type, loaded, places, setPlaces }) {
       <VehicleModal
         type={type}
         open={open1}
-        type={type}
         handleClose={handleClose1}
         selectVehicle={selectVehicle}
       />
