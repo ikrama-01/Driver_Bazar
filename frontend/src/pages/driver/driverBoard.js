@@ -133,21 +133,21 @@ const getUserLocation = () => {
           }}
           indicatorColor="#172B4D"
         >
-          <Tab label="Vehicle" {...a11yProps(0)} />
-          <Tab label="Ride Notifications" {...a11yProps(1)} />
+          {/* <Tab label="Vehicle" {...a11yProps(0)} /> */}
+          <Tab label="Ride Notifications" {...a11yProps(0)} />
           <Tab label="Rent Notifications" {...a11yProps(2)} />
         </Tabs>
         <Divider />
       </Grid>
       <Grid item md={9}>
 
-        {/* Vehicle Page */}
+        {/* Vehicle Page
         <TabPanel value={value} index={0}>
           <VehicleCards />
-        </TabPanel>
+        </TabPanel> */}
 
         {/* Ride notifications Page */}
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} index={0}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={12}>
               <DriverJobs />
@@ -156,7 +156,7 @@ const getUserLocation = () => {
         </TabPanel>
 
              {/* Rent notifications Page */}
-             <TabPanel value={value} index={2}>
+             <TabPanel value={value} index={1}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={12}>
               <Rent />

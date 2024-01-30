@@ -12,6 +12,9 @@ class User:
           "name": data['name'],
           "email": data['email'],
           "password": pbkdf2_sha256.encrypt(data['password']),
+          "age": data['age'],
+          "gender":data['gender'],
+          "phoneNo":data['phoneNo'],
           "role": data['role']
         #   "did" : data['did']
       }
@@ -51,15 +54,18 @@ class User:
                 return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired, "preferredVehicle": str(driver["preferredVehicleId"])}
             return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired}
         
-        if user['role'] == 'owner':
-            owner = db.FleetOwner.find_one({"uid": user['_id']})
-            return {'name': owner['name'], 'role': 'driver', 'email': user['email'], '_id': str(owner['_id']), 'uid': str(user['_id'])}
+        # if user['role'] == 'owner':
+        #     owner = db.FleetOwner.find_one({"uid": user['_id']})
+        #     return {'name': owner['name'], 'role': 'driver', 'email': user['email'], '_id': str(owner['_id']), 'uid': str(user['_id'])}
+        # if user['role'] == "rider":
+        #     return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
         
         if user['name'] and pbkdf2_sha256.verify(data['password'], user['password']):
             if 'did' not in user: 
                 return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
             return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['did'])}
-
+        
+        
         return jsonify({"error": "Invalid login credentials"}), 401
     
     
@@ -71,12 +77,19 @@ class User:
         user = db.users.find_one({"email": email})
         if user:
             db.users.update_one({"email": email}, {"$set": {"role": new_role}})
-            return jsonify({"success": True, "message": "User role updated successfully"}), 200
-        else:
+            if user['role'] == 'driver':
+                driver = db.Drivers.find_one({"uid": user['_id']})
+                hired = False if 'vehicleId' not in driver.keys() else True
+                if not hired and "preferredVehicleId" in driver.keys():
+                    return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired, "preferredVehicle": str(driver["preferredVehicleId"])}
+                return {'name': driver['name'], 'role': 'driver', 'email': user['email'], '_id': str(driver['_id']), 'uid': str(user['_id']), "hired": hired}
+            if user['role'] != "driver":
+                if 'did' not in user: 
+                    return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['_id'])}
+                return {'name': user['name'], 'role': user['role'], 'email': user['email'], '_id': str(user['did'])}
+            
             return jsonify({"error": "User not found"}), 404
         
-    from flask import jsonify
-
 # Assuming db is your database connection
 
     # def check_id_match(id):

@@ -42,6 +42,8 @@ export const signup = async (formdata, state) => {
 export const switchRole = (email, newRole) => async (dispatch) => {
   try {
     const response = await switchRole_api({ email, new_role: newRole });
+    // dispatch( { type: "LOGIN", data: response } )
+
     return response;
   } catch (error) {
     console.log(error);

@@ -84,40 +84,17 @@ function Dash() {
           }}
           indicatorColor="#172B4D"
         >
-          <Tab label="Ride" {...a11yProps(0)} />
-          <Tab label="Hire" {...a11yProps(1)} />
+          <Tab label="Hire" {...a11yProps(0)} />
+          <Tab label="Ride" {...a11yProps(1)} />
           <Tab label="Rent" {...a11yProps(2)} />
           <Tab label="Vehicle" {...a11yProps(3)} />
         </Tabs>
         <Divider />
       </Grid>
       <Grid item md={9}>
-        {/* Ride Page */}
-        <TabPanel value={value} index={0}>
-          <Grid container item direction="row" spacing={5}>
-            <Grid item md={8}>
-              <Paper
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "white",
-                  borderRadius: 5,
-                }}
-                elevation={3}
-              >
-                <ChakraProvider theme={theme}>
-                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
-                </ChakraProvider>
-              </Paper>
-            </Grid>
-            <Grid item md={4}>
-              <BookingForm type="Book" loaded={loaded} places={dest} setPlaces={setDest} />
-            </Grid>
-          </Grid>
-        </TabPanel>
 
         {/* Hire Page */}
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} index={0}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={8}>
               <Paper
@@ -142,6 +119,33 @@ function Dash() {
             </Grid>
           </Grid>
         </TabPanel>
+
+
+        {/* Ride Page */}
+        <TabPanel value={value} index={1}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={8}>
+              <Paper
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                }}
+                elevation={3}
+              >
+                <ChakraProvider theme={theme}>
+                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
+                </ChakraProvider>
+              </Paper>
+            </Grid>
+            <Grid item md={4}>
+              <BookingForm type="Book" loaded={loaded} places={dest} setPlaces={setDest} />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+
 
         {/* Rent Page */}
         <TabPanel value={value} index={2}>

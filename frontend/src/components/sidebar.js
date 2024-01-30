@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -29,7 +30,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useDispatch } from "react-redux";
-
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import { Modal } from "@mui/material";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -98,9 +103,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function MiniDrawer({ hist, children }) {
+
+
+
   const theme = useTheme();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,6 +132,37 @@ export default function MiniDrawer({ hist, children }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleProfileClick = () => {
+    setOpen1(true);
+  };
+  const hancleCardClose = () => {
+    setOpen1(false);
+  };
+  // if(localStorage.getItem('role')=== "rider"){
+    const id = localStorage.getItem("id");
+  // }
+  // }else{
+  //   const id = localStorage.getItem("profile.uid");
+  // }
+  const getData = (id) => {
+    fetch(`http://localhost:5000/get_data?${id}`)
+      .then(response => response.json())
+      .then(data => {
+        // Use the retrieved data from the backend
+        console.log("fetched:",data);
+        // Display the data in the frontend as needed
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+    useEffect(() => {
+      getData(id);  
+    }, []);
+  
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -185,6 +225,10 @@ export default function MiniDrawer({ hist, children }) {
                     onClick={handleClose}
                   >
                     <MenuItem
+                      onClick={handleProfileClick}>
+                      Profile
+                    </MenuItem>
+                    <MenuItem
                       onClick={() => {
                         handleClose();
                         dispatch({ type: "LOGOUT" });
@@ -193,6 +237,7 @@ export default function MiniDrawer({ hist, children }) {
                     >
                       Logout
                     </MenuItem>
+
                   </Menu>
                 </div>
               )}
@@ -213,10 +258,10 @@ export default function MiniDrawer({ hist, children }) {
         <Divider />
         <List>
           {(localStorage.getItem("role") === "rider"
-            ? ["Home", "My Rides", "Payments","Switch to Driver"]
+            ? ["Home", "My Rides", "Payments", "Switch to Driver"]
             : localStorage.getItem("role") === "driver"
-            ? ["Home", "My Rides", "Payments", "Switch to Rider"]
-            : ["Home"]
+              ? ["Home", "My Rides", "Payments", "Switch to Rider"]
+              : ["Home"]
           ).map((text, index) => (
             <ListItem
               key={text}
@@ -228,22 +273,22 @@ export default function MiniDrawer({ hist, children }) {
                     index === 0
                       ? "/rider"
                       : index === 1
-                      ? "/rider/my-rides"
-                      : index === 2
-                      ? "/rider/payments"
-                      : index === 3
-                      ? "/driver/switch"
-                      : "/rider/notifications"
+                        ? "/rider/my-rides"
+                        : index === 2
+                          ? "/rider/payments"
+                          : index === 3
+                            ? "/driver/switch"
+                            : "/rider/notifications"
                   );
                 } else if (localStorage.getItem("role") === "driver") {
                   hist.push(
                     index === 0
                       ? "/driver"
                       : index === 1
-                      ? "/driver/my-rides"
-                      : index === 2
-                      ? "/driver/payments"
-                      : "/rider/switch"
+                        ? "/driver/my-rides"
+                        : index === 2
+                          ? "/driver/payments"
+                          : "/rider/switch"
                   );
                 }
               }}
@@ -278,6 +323,43 @@ export default function MiniDrawer({ hist, children }) {
         <DrawerHeader />
         {children}
       </Box>
+        {open1 && (
+          <Modal
+            open={open1}
+            onClose={hancleCardClose}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Card
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 9999,
+              }}
+            >
+              <CardContent>
+                <Paper
+                  sx={{
+                    width: "70vw",
+                    height: "85vh",
+                    backgroundColor: "white",
+                    borderRadius: 5,
+                    padding: "1% 0 0 0",
+                  }}
+                >
+                  <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
+                    Profile
+                  </Typography>
+                </Paper>
+              </CardContent>
+            </Card>
+          </Modal>
+        )}
     </Box>
   );
 }
