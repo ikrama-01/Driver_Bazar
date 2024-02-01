@@ -52,61 +52,61 @@ function DriverBoard() {
       },
     };
   }
-  
+
   const [latitude, setLatitude] = useState("");
-const [longitude, setLongitude] = useState("");
-const [id, setId] = useState();
-const [key, setKey] = useState(null);
+  const [longitude, setLongitude] = useState("");
+  const [id, setId] = useState();
+  const [key, setKey] = useState(null);
 
-const getUserLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const currentLatitude = position.coords.latitude;
-        const currentLongitude = position.coords.longitude;
-        const currentId = localStorage.getItem('id'); 
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const currentLatitude = position.coords.latitude;
+          const currentLongitude = position.coords.longitude;
+          const currentId = localStorage.getItem('id');
 
-        setLatitude(currentLatitude);
-        setLongitude(currentLongitude);
-        setId(currentId);
+          setLatitude(currentLatitude);
+          setLongitude(currentLongitude);
+          setId(currentId);
 
-        console.log('User Location:');
-        console.log(`Latitude: ${currentLatitude}`);
-        console.log(`Longitude: ${currentLongitude}`);
-        console.log("Message being sent");
+          console.log('User Location:');
+          console.log(`Latitude: ${currentLatitude}`);
+          console.log(`Longitude: ${currentLongitude}`);
+          console.log("Message being sent");
 
-        if (currentLatitude && currentLongitude) {
-          fetch(`https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location/${currentId}.json`, {
-            method: 'PUT', // Use PUT to update or create a new entry with the specified ID
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ latitude: currentLatitude, longitude: currentLongitude }),
-          })
-          
-            .then(response => response.json())
-            .then(data => {
-              console.log(data);
+          if (currentLatitude && currentLongitude) {
+            fetch(`https://driverbazar-543a6-default-rtdb.asia-southeast1.firebasedatabase.app/location/${currentId}.json`, {
+              method: 'PUT', // Use PUT to update or create a new entry with the specified ID
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ latitude: currentLatitude, longitude: currentLongitude }),
             })
-            .catch(error => {
-              console.error('Error sending location data to Firebase:', error.message);
-            });
+
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+              })
+              .catch(error => {
+                console.error('Error sending location data to Firebase:', error.message);
+              });
+          }
+        },
+        (error) => {
+          console.error('Error getting user location:', error.message);
         }
-      },
-      (error) => {
-        console.error('Error getting user location:', error.message);
-      }
-    );
-  } else {
-    console.error('Geolocation is not supported by this browser.');
-  }
-};
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  };
 
 
-  
+
 
   useEffect(() => {
-    getUserLocation();  
+    getUserLocation();
   }, []);
 
   return (
@@ -135,7 +135,9 @@ const getUserLocation = () => {
         >
           {/* <Tab label="Vehicle" {...a11yProps(0)} /> */}
           <Tab label="Ride Notifications" {...a11yProps(0)} />
-          <Tab label="Rent Notifications" {...a11yProps(2)} />
+          <Tab label="Ride " {...a11yProps(1)} />
+          <Tab label="Rent" {...a11yProps(2)} />
+          {/* <Tab label="Rent Notifications" {...a11yProps(3)} /> */}
         </Tabs>
         <Divider />
       </Grid>
@@ -146,7 +148,6 @@ const getUserLocation = () => {
           <VehicleCards />
         </TabPanel> */}
 
-        {/* Ride notifications Page */}
         <TabPanel value={value} index={0}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={12}>
@@ -155,14 +156,76 @@ const getUserLocation = () => {
           </Grid>
         </TabPanel>
 
-             {/* Rent notifications Page */}
-             <TabPanel value={value} index={1}>
+        { /* Ride Page*/}
+        <TabPanel value={value} index={1}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={8}>
+              <Paper
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                }}
+                elevation={3}
+              >
+                <ChakraProvider theme={theme}>
+                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
+                </ChakraProvider>
+              </Paper>
+            </Grid>
+            <Grid item md={4}>
+              <BookingForm type="Book" loaded={loaded} places={dest} setPlaces={setDest} />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+
+
+
+        { /* Rent Page*/}
+        <TabPanel value={value} index={2}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={8}>
+              <Paper
+                sx={{
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                }}
+                elevation={3}
+              >
+                <ChakraProvider theme={theme}>
+                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
+                </ChakraProvider>
+              </Paper>
+            </Grid>
+            <Grid item md={4}>
+              <BookingForm
+                type="Rent"
+                loaded={loaded}
+                places={dest}
+                setPlaces={setDest}
+              />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+
+
+
+
+
+        {/* Ride notifications Page */}
+
+
+        {/* Rent notifications Page */}
+        {/* <TabPanel value={value} index={3}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={12}>
               <Rent />
             </Grid>
           </Grid>
-        </TabPanel>
+        </TabPanel> */}
       </Grid>
     </Grid>
   );

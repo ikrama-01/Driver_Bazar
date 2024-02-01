@@ -7,7 +7,7 @@ import Map from "../../components/map";
 import { ChakraProvider, theme } from "@chakra-ui/react";
 import BookingForm from "../../components/mapForm";
 import { withRouter } from "react-router-dom";
-
+import Rent from "../../components/RentNotifiction";
 import "./ownerBoard.css";
 import VehicleCards from "../../components/vehicleCards";
 
@@ -82,11 +82,13 @@ function OwnerDashboard() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}  
+          }}
           indicatorColor="#172B4D"
         >
           <Tab label="Hire" {...a11yProps(0)} />
           <Tab label="Vehicle" {...a11yProps(1)} />
+          <Tab label="Ride" {...a11yProps(2)} />
+          <Tab label="Rent Notification" {...a11yProps(3)} />
         </Tabs>
         <Divider />
       </Grid>
@@ -119,12 +121,47 @@ function OwnerDashboard() {
           </Grid>
         </TabPanel>
 
-       
+
 
         {/* Vehicle Page */}
         <TabPanel value={value} index={1}>
           <VehicleCards />
         </TabPanel>
+
+        { /* Ride Page*/}
+        <TabPanel value={value} index={2}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={8}>
+              <Paper
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                }}
+                elevation={3}
+              >
+                <ChakraProvider theme={theme}>
+                  <Map callback={setLoaded} places={dest} setPlaces={setDest} />
+                </ChakraProvider>
+              </Paper>
+            </Grid>
+            <Grid item md={4}>
+              <BookingForm type="Book" loaded={loaded} places={dest} setPlaces={setDest} />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
+
+        {/* Ride notifications Page */}
+        <TabPanel value={value} index={3}>
+          <Grid container item direction="row" spacing={5}>
+            <Grid item md={12}>
+              <Rent />
+            </Grid>
+          </Grid>
+        </TabPanel>
+
       </Grid>
     </Grid>
   );

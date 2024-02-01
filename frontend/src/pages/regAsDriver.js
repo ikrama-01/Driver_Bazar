@@ -13,8 +13,8 @@ const AddDriver = () => {
     name: "",
     email: "",
     rating: 0,
-    priceperkm: "",
-    priceperhour: "",
+    pricepermonth: "",
+    priceperday: "",
     experience: "",
     password: "",
     confirm: "",
@@ -44,8 +44,8 @@ const AddDriver = () => {
         {
           name: state.name,
           rating: Number(state.rating),
-          priceperkm: Number(state.priceperkm),
-          priceperhour: Number(state.priceperhour),
+          pricepermonth: Number(state.pricepermonth),
+          priceperday: Number(state.priceperday),
           experience: state.experience,
           carMode: carMode,
           aadharNo: state.aadharNo,
@@ -58,8 +58,8 @@ const AddDriver = () => {
             name: "",
             email: "",
             rating: "",
-            priceperkm: "",
-            priceperhour: "",
+            pricepermonth: "",
+            priceperday: "",
             experience: "",
             password: "",
             confirm: "",
@@ -334,10 +334,10 @@ const AddDriver = () => {
           required
           variant="outlined"
           fullWidth
-          name="priceperkm"
+          name="pricepermonth"
           onChange={handleChange}
-          value={state.priceperkm}
-          label="Pricing (per kilometer)"
+          value={state.pricepermonth}
+          label="Pricing (per Month)"
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -345,10 +345,10 @@ const AddDriver = () => {
           required
           variant="outlined"
           fullWidth
-          name="priceperhour"
+          name="priceperday"
           onChange={handleChange}
-          value={state.priceperhour}
-          label="Pricing (per hour)"
+          value={state.priceperday}
+          label="Pricing (per Day)"
         />
       </Grid>
 

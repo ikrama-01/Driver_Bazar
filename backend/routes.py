@@ -28,22 +28,28 @@ commVehicle = CommercialVehicle()
 # USER
 
 #get data for profile
-@app.route('/get_data', methods=['GET'])
+@app.route('/get_data', methods=['POST'])
 def get_data():
-  data = request.get_json()  # Extract JSON data from the request
-        # Implement your logic to check the ID in the database based on 'data'
-        # Your existing logic goes here...
-        # return user.check_id_match(data)
-        # return jsonify({'success': True}), 200  # Return a success response
-  user_id = data.get('id')
-  print("new id")
-  print(user_id)
-  user_object_id = ObjectId(id)
-  response = db.users.find_one({"did": user_object_id})
-  if response:
-    return jsonify(response)
-  else:
-    return jsonify({"error": "Document not found"})
+    data = request.get_json()  # Extract JSON data from the request
+    user_id = data.get('id')
+    print(user_id)
+    if not user_id: 
+        return jsonify({"error": "ID not provided in the request body"}), 400
+
+    try:
+        user_object_id = ObjectId(user_id)
+    except Exception as e:
+        return jsonify({"error": f"Invalid ID format: {str(e)}"}), 400
+
+    response = db.users.find_one({"did": user_object_id})
+
+    if response:
+        response['_id'] = str(response['_id'])
+        response['did'] = str(response['did'])
+        response['rid'] = str(response['rid'])
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Document not found"}), 404
 
 ## Register
 @app.route('/user/signup/', methods=['POST'])

@@ -34,7 +34,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { Modal } from "@mui/material";
+import { Button, Modal } from "@mui/material";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -140,27 +140,52 @@ export default function MiniDrawer({ hist, children }) {
     setOpen1(false);
   };
   // if(localStorage.getItem('role')=== "rider"){
-    const id = localStorage.getItem("id");
+  const id = localStorage.getItem("id");
   // }
   // }else{
   //   const id = localStorage.getItem("profile.uid");
   // }
+  // const getData = (id) => {
+  //   fetch(`http://localhost:5000/get_data?${id}`)
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // Use the retrieved data from the backend
+  //       console.log("fetched:",data);
+  //       // Display the data in the frontend as needed
+  //     })
+  //     .catch(error => {
+  //       console.error('Error:', error);
+  //     });
+  //   }
+  const [userProfileInfo, setUserProfileInfo] = useState(null);
   const getData = (id) => {
-    fetch(`http://localhost:5000/get_data?${id}`)
-      .then(response => response.json())
+    fetch('http://localhost:5000/get_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: id }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
         // Use the retrieved data from the backend
-        console.log("fetched:",data);
+        setUserProfileInfo(data);
+        console.log("fetched:", data);
         // Display the data in the frontend as needed
       })
       .catch(error => {
-        console.error('Error:', error);
+        console.error('Error:', error.message);
       });
-    }
-    useEffect(() => {
-      getData(id);  
-    }, []);
-  
+  }
+  useEffect(() => {
+    getData(id);
+  }, []);
+
 
 
   return (
@@ -261,7 +286,7 @@ export default function MiniDrawer({ hist, children }) {
             ? ["Home", "My Rides", "Payments", "Switch to Driver"]
             : localStorage.getItem("role") === "driver"
               ? ["Home", "My Rides", "Payments", "Switch to Rider"]
-              : ["Home"]
+              : ["Home", "My Rides", "Payments"]
           ).map((text, index) => (
             <ListItem
               key={text}
@@ -290,6 +315,15 @@ export default function MiniDrawer({ hist, children }) {
                           ? "/driver/payments"
                           : "/rider/switch"
                   );
+                } else{
+                  hist.push(
+                    index === 0
+                      ? "/owner"
+                      : index === 1
+                        ? "/rider/my-rides"
+                        : "/rider/payments"
+                  );
+
                 }
               }}
             >
@@ -323,44 +357,70 @@ export default function MiniDrawer({ hist, children }) {
         <DrawerHeader />
         {children}
       </Box>
-        {open1 && (
-          <Modal
-            open={open1}
-            onClose={hancleCardClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+      {open1 && (
+        <Modal
+          open={open1}
+          onClose={hancleCardClose}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Card
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '70vw',
+              height: '85vh',
+              backgroundColor: 'white',
+              borderRadius: 5,
+              padding: '1% 0 0 0',
+              justifyContent: 'center',
             }}
           >
-            <Card
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                zIndex: 9999,
-              }}
-            >
-              <CardContent>
-                <Paper
-                  sx={{
-                    width: "70vw",
-                    height: "85vh",
-                    backgroundColor: "white",
-                    borderRadius: 5,
-                    padding: "1% 0 0 0",
-                  }}
+            {/* <Typography variant="h3" style={{ width: '100%', textAlign: 'center', marginTop: '10px', marginBottom: '200px' }}>
+              Profile
+            </Typography> */}
+
+            <Grid container spacing={2} justifyContent= 'center'>
+              {/* Profile Icon */}
+              <Grid item>
+                <IconButton
+                  aria-label="account of current user"
+                  color="inherit"
+                  size="large"
+                  sx={{ margin: '20px' }}
                 >
-                  <Typography variant="h5" style={{ width: "100%", textAlign: "center" }}>
-                    Profile
-                  </Typography>
-                </Paper>
-              </CardContent>
-            </Card>
-          </Modal>
-        )}
-    </Box>
+                  <AccountCircle style={{ fontSize: '200px' }} />
+                </IconButton>
+              </Grid>
+
+              {/* Other Profile Information */}
+              <Grid item xs={12}>
+                <Typography variant="h5" style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+                  Name: {userProfileInfo.name}
+                </Typography>
+                <br/>
+                <Typography variant="h5" style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+                  Email: {userProfileInfo.email}
+                </Typography>
+                <br/>
+                <Typography variant="h5" style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+                  Role: {userProfileInfo.role}
+                </Typography>
+                <br/>
+                <Button variant="h5" style={{width:'100%', textAlign: 'center', marginBottom: 10 }}>
+                  Edit
+                </Button>
+              </Grid>
+            </Grid>
+          </Card>
+        </Modal>
+      )
+      }
+    </Box >
   );
 }
 

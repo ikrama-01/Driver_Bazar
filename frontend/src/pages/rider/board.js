@@ -84,17 +84,17 @@ function Dash() {
           }}
           indicatorColor="#172B4D"
         >
-          <Tab label="Hire" {...a11yProps(0)} />
-          <Tab label="Ride" {...a11yProps(1)} />
-          <Tab label="Rent" {...a11yProps(2)} />
-          <Tab label="Vehicle" {...a11yProps(3)} />
+          {/* <Tab label="Hire" {...a11yProps(0)} /> */}
+          <Tab label="Ride" {...a11yProps(0)} />
+          <Tab label="Rent" {...a11yProps(1)} />
+          {/* <Tab label="Vehicle" {...a11yProps(3)} /> */}
         </Tabs>
         <Divider />
       </Grid>
       <Grid item md={9}>
 
         {/* Hire Page */}
-        <TabPanel value={value} index={0}>
+        {/* <TabPanel value={value} index={0}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={8}>
               <Paper
@@ -118,11 +118,11 @@ function Dash() {
               />
             </Grid>
           </Grid>
-        </TabPanel>
+        </TabPanel> */}
 
 
         {/* Ride Page */}
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} index={0}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={8}>
               <Paper
@@ -148,7 +148,7 @@ function Dash() {
 
 
         {/* Rent Page */}
-        <TabPanel value={value} index={2}>
+        <TabPanel value={value} index={1}>
           <Grid container item direction="row" spacing={5}>
             <Grid item md={8}>
               <Paper
@@ -175,9 +175,9 @@ function Dash() {
         </TabPanel>
 
         {/* Vehicle Page */}
-        <TabPanel value={value} index={3}>
+        {/* <TabPanel value={value} index={3}>
           <VehicleCards />
-        </TabPanel>
+        </TabPanel> */}
       </Grid>
     </Grid>
   );
